@@ -1,0 +1,3036 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mídia Igreja Studio PRO - Gerador Ilimitado de Artes</title>
+  
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Montserrat', 'sans-serif'],
+            condensed: ['Bebas Neue', 'sans-serif'],
+            serif: ['Playfair Display', 'serif'],
+            classic: ['Cinzel', 'serif'],
+            modern: ['Poppins', 'sans-serif'],
+            brutal: ['Oswald', 'sans-serif']
+          },
+          colors: {
+            studio: {
+              950: '#09090d',
+              900: '#101016',
+              850: '#16161f',
+              800: '#1e1e29',
+              700: '#2b2b3a',
+              accent: '#6366f1'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts para UI e Canvas -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cinzel:wght@600;700;900&family=Inter:wght@400;500;600;700&family=Montserrat:wght@600;700;800;900&family=Oswald:wght@500;700&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      background-color: #09090d;
+      color: #f4f4f5;
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+    }
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 7px; height: 7px; }
+    ::-webkit-scrollbar-track { background: #101016; }
+    ::-webkit-scrollbar-thumb { background: #2b2b3a; border-radius: 99px; }
+    ::-webkit-scrollbar-thumb:hover { background: #43435a; }
+
+    /* Checkerboard pattern behind canvas */
+    .canvas-stage-bg {
+      background-color: #0e0e14;
+      background-image:
+        radial-gradient(rgba(99, 102, 241, 0.08) 1px, transparent 1px),
+        radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+      background-size: 28px 28px;
+      background-position: 0 0, 14px 14px;
+    }
+
+    input[type="range"] {
+      accent-color: #6366f1;
+    }
+    input[type="color"] {
+      -webkit-appearance: none;
+      border: none;
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      cursor: pointer;
+      background: transparent;
+    }
+    input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+    input[type="color"]::-webkit-color-swatch {
+      border: 2px solid rgba(255,255,255,0.2);
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white">
+
+  <!-- ==================== GALLERY / HOME VIEW ==================== -->
+  <div id="gallery-view" class="flex-1 flex flex-col">
+    
+    <!-- Top Navigation -->
+    <header class="sticky top-0 z-30 bg-studio-950/85 backdrop-blur-xl border-b border-white/10">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 via-purple-500 to-amber-500 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+            <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v18m-6-13h12M4 16l4-4 4 4 4-4 4 4"/>
+            </svg>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h1 class="font-display font-extrabold text-lg sm:text-xl tracking-tight text-white">Mídia Igreja <span class="text-indigo-400">Studio PRO</span></h1>
+              <span class="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">100% Gratuito</span>
+            </div>
+            <p class="text-xs text-zinc-400">Gerador ilimitado de artes em alta resolução • Sem marca d'água</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2.5">
+          <button onclick="openChurchModal()" class="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-studio-800 hover:bg-studio-700 border border-white/10 text-sm font-medium text-zinc-100 transition-all shadow-sm">
+            <svg class="w-4 h-4 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+            </svg>
+            <span>Configurar Minha Igreja</span>
+            <span id="church-saved-dot" class="hidden w-2 h-2 rounded-full bg-emerald-400"></span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Hero Banner + Category Filter -->
+    <section class="max-w-7xl w-full mx-auto px-4 sm:px-6 pt-7 pb-4">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
+        <div>
+          <h2 class="font-display font-bold text-2xl sm:text-3xl text-white tracking-tight">Escolha um modelo e edite em segundos</h2>
+          <p class="text-sm text-zinc-400 mt-1">32 layouts exclusivos criados para o ministério de mídia. Clique em qualquer arte para abrir o estúdio.</p>
+        </div>
+        <div class="flex items-center gap-2 text-xs text-zinc-400 bg-studio-900 border border-white/10 px-3 py-2 rounded-xl">
+          <span class="w-2 h-2 rounded-full bg-indigo-400 animate-pulse"></span>
+          <span>Formatos: Feed (1080×1350), Stories (1080×1920) e YouTube (1920×1080)</span>
+        </div>
+      </div>
+
+      <!-- 8 Categories Tabs -->
+      <div id="category-tabs" class="flex items-center gap-2 overflow-x-auto pb-3 no-scrollbar">
+        <!-- Rendered by JS -->
+      </div>
+    </section>
+
+    <!-- Templates Grid -->
+    <main class="max-w-7xl w-full mx-auto px-4 sm:px-6 pb-16 flex-1">
+      <div id="templates-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <!-- 32 Live Canvas Cards Rendered by JS -->
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/10 bg-studio-950 py-5 px-6 text-center text-xs text-zinc-500">
+      Mídia Igreja Studio PRO • Processamento 100% local no seu navegador • Nenhuma foto é enviada para servidores • Feito para abençoar igrejas.
+    </footer>
+  </div>
+
+  <!-- ==================== STUDIO EDITOR VIEW (FULL SCREEN) ==================== -->
+  <div id="editor-view" class="hidden fixed inset-0 z-40 bg-studio-950 flex flex-col">
+    
+    <!-- Editor Top Bar -->
+    <header class="h-14 shrink-0 bg-studio-900 border-b border-white/10 px-3 sm:px-5 flex items-center justify-between gap-2">
+      <div class="flex items-center gap-2 sm:gap-3 min-w-0">
+        <button onclick="closeEditor()" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-studio-800 hover:bg-studio-700 text-zinc-200 text-xs sm:text-sm font-medium border border-white/10 transition">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+          <span class="hidden sm:inline">Modelos</span>
+        </button>
+        <div class="h-5 w-px bg-white/10 hidden sm:block"></div>
+        <div class="truncate">
+          <span id="editor-theme-badge" class="text-[10px] font-bold uppercase tracking-wider text-indigo-400 block leading-none">Tema</span>
+          <h2 id="editor-template-name" class="text-xs sm:text-sm font-semibold text-white truncate">Nome do Modelo</h2>
+        </div>
+      </div>
+
+      <!-- Format Switcher (Center) -->
+      <div class="hidden md:flex items-center bg-studio-950 p-1 rounded-xl border border-white/10 gap-1">
+        <button onclick="setFormat('portrait')" data-format="portrait" class="format-btn px-3 py-1 rounded-lg text-xs font-medium transition flex items-center gap-1.5">
+          <span class="w-2.5 h-3.5 border border-current rounded-[2px]"></span> Feed 1080×1350
+        </button>
+        <button onclick="setFormat('story')" data-format="story" class="format-btn px-3 py-1 rounded-lg text-xs font-medium transition flex items-center gap-1.5">
+          <span class="w-2 h-4 border border-current rounded-[2px]"></span> Stories 1080×1920
+        </button>
+        <button onclick="setFormat('landscape')" data-format="landscape" class="format-btn px-3 py-1 rounded-lg text-xs font-medium transition flex items-center gap-1.5">
+          <span class="w-4 h-2.5 border border-current rounded-[2px]"></span> YouTube 1920×1080
+        </button>
+      </div>
+
+      <!-- Right Actions -->
+      <div class="flex items-center gap-2">
+        <button onclick="openChurchModal()" title="Configurar Minha Igreja" class="p-2 sm:px-3 sm:py-1.5 rounded-lg bg-studio-800 hover:bg-studio-700 border border-white/10 text-zinc-200 text-xs font-medium flex items-center gap-1.5 transition">
+          <svg class="w-4 h-4 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5"/></svg>
+          <span class="hidden lg:inline">Minha Igreja</span>
+        </button>
+        <button onclick="downloadPNG()" class="px-3.5 sm:px-5 py-2 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-400 hover:to-purple-500 text-white text-xs sm:text-sm font-bold shadow-lg shadow-indigo-500/25 flex items-center gap-2 transition active:scale-95">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+          <span>Baixar Imagem Pronta (PNG)</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Studio Split -->
+    <div class="flex-1 flex flex-col lg:flex-row min-h-0 overflow-hidden">
+      
+      <!-- LEFT TOOL PANEL -->
+      <aside class="w-full lg:w-[400px] xl:w-[420px] shrink-0 bg-studio-900 border-r border-white/10 flex flex-col min-h-0 order-2 lg:order-1 h-[48vh] lg:h-auto">
+        
+        <!-- Quick Variation Switcher (4 Layouts of Current Theme) -->
+        <div class="p-3 bg-studio-850 border-b border-white/10">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[11px] font-bold uppercase tracking-wider text-zinc-400">Variações deste Tema (mantém seus textos)</span>
+          </div>
+          <div id="quick-variations" class="grid grid-cols-4 gap-1.5">
+            <!-- Buttons 1..4 rendered by JS -->
+          </div>
+        </div>
+
+        <!-- Mobile Format Switcher -->
+        <div class="flex md:hidden items-center justify-around bg-studio-950 p-1.5 border-b border-white/10 gap-1">
+          <button onclick="setFormat('portrait')" data-format="portrait" class="format-btn flex-1 py-1 rounded text-[11px] font-medium">Feed 4:5</button>
+          <button onclick="setFormat('story')" data-format="story" class="format-btn flex-1 py-1 rounded text-[11px] font-medium">Stories 9:16</button>
+          <button onclick="setFormat('landscape')" data-format="landscape" class="format-btn flex-1 py-1 rounded text-[11px] font-medium">YouTube 16:9</button>
+        </div>
+
+        <!-- Tool Tabs -->
+        <div class="grid grid-cols-4 border-b border-white/10 bg-studio-900 shrink-0">
+          <button onclick="switchToolTab('textos')" data-tool="textos" class="tool-tab py-2.5 text-xs font-semibold flex flex-col items-center gap-1 border-b-2 transition">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h10m-10 6h16"/></svg>
+            Textos
+          </button>
+          <button onclick="switchToolTab('fotos')" data-tool="fotos" class="tool-tab py-2.5 text-xs font-semibold flex flex-col items-center gap-1 border-b-2 transition">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            Fotos
+          </button>
+          <button onclick="switchToolTab('cores')" data-tool="cores" class="tool-tab py-2.5 text-xs font-semibold flex flex-col items-center gap-1 border-b-2 transition">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/></svg>
+            Cores
+          </button>
+          <button onclick="switchToolTab('selos')" data-tool="selos" class="tool-tab py-2.5 text-xs font-semibold flex flex-col items-center gap-1 border-b-2 transition">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+            Selos & Logo
+          </button>
+        </div>
+
+        <!-- Tool Content Scroll Area -->
+        <div class="flex-1 overflow-y-auto p-4 space-y-4">
+          
+          <!-- TAB: TEXTOS -->
+          <div id="panel-textos" class="tool-panel space-y-3.5">
+            <div>
+              <label class="block text-xs font-semibold text-zinc-300 mb-1">Etiqueta Superior</label>
+              <input id="inp-tag" type="text" placeholder="Ex: CULTO DE CELEBRAÇÃO" class="w-full bg-studio-950 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:border-indigo-500 focus:outline-none">
+            </div>
+
+            <div>
+              <div class="flex items-center justify-between mb-1">
+                <label class="text-xs font-semibold text-zinc-300">Título Principal</label>
+                <span class="text-[11px] text-indigo-400 font-mono">Tamanho: <span id="val-title-size">100</span>%</span>
+              </div>
+              <input id="inp-title" type="text" placeholder="Título de destaque" class="w-full bg-studio-950 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:border-indigo-500 focus:outline-none mb-2">
+              <input id="inp-title-size" type="range" min="60" max="150" value="100" class="w-full h-1.5 bg-studio-800 rounded-lg cursor-pointer">
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-zinc-300 mb-1">Subtítulo / Nome do Pregador ou Aniversariante</label>
+              <input id="inp-subtitle" type="text" placeholder="Ex: Pr. Marcos Oliveira" class="w-full bg-studio-950 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:border-indigo-500 focus:outline-none">
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-zinc-300 mb-1">Informações / Horário / Versículo <span class="text-[10px] text-zinc-500 font-normal">(Quebre linhas para listas)</span></label>
+              <textarea id="inp-info" rows="3" placeholder="Domingo às 19h • Entrada Franca" class="w-full bg-studio-950 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:border-indigo-500 focus:outline-none resize-y"></textarea>
+            </div>
+
+            <div class="pt-2 border-t border-white/10 space-y-2.5">
+              <div class="flex items-center justify-between">
+                <span class="text-[11px] font-bold uppercase tracking-wider text-zinc-400">Rodapé da Igreja</span>
+                <button onclick="applyChurchMemoryToCurrent()" class="text-[11px] text-indigo-400 hover:text-indigo-300 underline">Puxar de "Minha Igreja"</button>
+              </div>
+              <input id="inp-church" type="text" placeholder="Nome da Igreja" class="w-full bg-studio-950 border border-white/10 rounded-lg px-3 py-1.5 text-xs text-white focus:border-indigo-500 focus:outline-none">
+              <div class="grid grid-cols-2 gap-2">
+                <input id="inp-address" type="text" placeholder="Endereço / Cidade" class="w-full bg-studio-950 border border-white/10 rounded-lg px-3 py-1.5 text-xs text-white focus:border-indigo-500 focus:outline-none">
+                <input id="inp-instagram" type="text" placeholder="@seuinstagram" class="w-full bg-studio-950 border border-white/10 rounded-lg px-3 py-1.5 text-xs text-white focus:border-indigo-500 focus:outline-none">
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB: FOTOS -->
+          <div id="panel-fotos" class="tool-panel hidden space-y-4">
+            <div id="photo-mode-hint" class="p-2.5 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-xs text-indigo-200">
+              Dica: Você também pode arrastar a foto diretamente na tela à direita para reposicionar.
+            </div>
+            <div id="photo-slots-container" class="space-y-4">
+              <!-- Dynamically rendered for 1 photo OR 4 photos (Aniversariantes do mês) -->
+            </div>
+          </div>
+
+          <!-- TAB: CORES -->
+          <div id="panel-cores" class="tool-panel hidden space-y-4">
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-zinc-400 mb-2">12 Paletas Prontas (1 Clique)</label>
+              <div id="palettes-grid" class="grid grid-cols-3 gap-2">
+                <!-- 12 palettes rendered by JS -->
+              </div>
+            </div>
+
+            <div class="pt-3 border-t border-white/10">
+              <label class="block text-xs font-bold uppercase tracking-wider text-zinc-400 mb-2.5">Cores Personalizadas</label>
+              <div class="grid grid-cols-3 gap-2.5">
+                <div class="bg-studio-950 border border-white/10 rounded-xl p-2.5 flex flex-col items-center gap-1.5">
+                  <input id="col-bg" type="color" value="#0a1636">
+                  <span class="text-[11px] font-medium text-zinc-300">Fundo</span>
+                </div>
+                <div class="bg-studio-950 border border-white/10 rounded-xl p-2.5 flex flex-col items-center gap-1.5">
+                  <input id="col-accent" type="color" value="#3b82f6">
+                  <span class="text-[11px] font-medium text-zinc-300">Destaque</span>
+                </div>
+                <div class="bg-studio-950 border border-white/10 rounded-xl p-2.5 flex flex-col items-center gap-1.5">
+                  <input id="col-text" type="color" value="#ffffff">
+                  <span class="text-[11px] font-medium text-zinc-300">Textos</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB: SELOS & LOGO -->
+          <div id="panel-selos" class="tool-panel hidden space-y-4">
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-zinc-400 mb-2">Adesivos / Selos na Arte</label>
+              <div class="grid grid-cols-2 gap-2" id="stickers-list">
+                <!-- Sticker toggles rendered by JS -->
+              </div>
+            </div>
+
+            <div class="pt-3 border-t border-white/10 space-y-3">
+              <div class="flex items-center justify-between">
+                <label class="text-xs font-bold uppercase tracking-wider text-zinc-400">Logo da Igreja (PNG)</label>
+                <label class="flex items-center gap-2 text-xs text-zinc-300 cursor-pointer">
+                  <input id="chk-show-logo" type="checkbox" checked class="rounded bg-studio-950 border-white/20 text-indigo-500">
+                  Exibir na arte
+                </label>
+              </div>
+              
+              <div class="flex items-center gap-3 bg-studio-950 border border-white/10 rounded-xl p-3">
+                <div id="editor-logo-preview" class="w-12 h-12 rounded-lg bg-studio-800 border border-white/10 flex items-center justify-center overflow-hidden shrink-0 text-[10px] text-zinc-500">
+                  Sem Logo
+                </div>
+                <div class="flex-1 min-w-0">
+                  <label class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-studio-800 hover:bg-studio-700 text-xs font-medium text-white cursor-pointer border border-white/10 transition">
+                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                    Subir Logo PNG
+                    <input id="inp-editor-logo" type="file" accept="image/*" class="hidden">
+                  </label>
+                  <button onclick="removeEditorLogo()" class="block mt-1 text-[11px] text-rose-400 hover:underline">Remover logo</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="pt-2">
+              <button onclick="resetCurrentTemplate()" class="w-full py-2 rounded-lg bg-studio-800 hover:bg-studio-700 border border-white/10 text-xs text-zinc-300 transition">
+                Restaurar textos e cores padrão deste modelo
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </aside>
+
+      <!-- RIGHT LIVE INTERACTIVE CANVAS AREA -->
+      <main class="flex-1 canvas-stage-bg flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8 relative overflow-hidden order-1 lg:order-2 min-h-[42vh]">
+        <div id="canvas-wrapper" class="relative flex items-center justify-center w-full h-full">
+          <canvas id="studio-canvas" class="rounded-lg shadow-[0_20px_70px_rgba(0,0,0,0.75)] border border-white/10 cursor-move max-w-full max-h-full object-contain touch-none"></canvas>
+        </div>
+        <div class="mt-2.5 flex items-center gap-3 text-[11px] text-zinc-400 bg-studio-900/90 border border-white/10 px-3 py-1 rounded-full backdrop-blur">
+          <span id="resolution-badge" class="font-mono text-indigo-300 font-semibold">1080 × 1350 px</span>
+          <span>•</span>
+          <span>Arraste sobre a arte para mover a foto</span>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL: CONFIGURAR MINHA IGREJA ==================== -->
+  <div id="church-modal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-studio-900 border border-white/15 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 class="font-display font-bold text-lg text-white">Configurar Minha Igreja</h3>
+          <p class="text-xs text-zinc-400">Salvo automaticamente em todas as 32 artes.</p>
+        </div>
+        <button onclick="closeChurchModal()" class="p-1.5 rounded-lg hover:bg-white/10 text-zinc-400 hover:text-white">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="space-y-3">
+        <div>
+          <label class="block text-xs font-semibold text-zinc-300 mb-1">Logo da Igreja (PNG transparente recomendado)</label>
+          <div class="flex items-center gap-3 bg-studio-950 border border-white/10 rounded-xl p-3">
+            <div id="modal-logo-preview" class="w-14 h-14 rounded-lg bg-studio-800 border border-white/10 flex items-center justify-center overflow-hidden text-[10px] text-zinc-500 shrink-0">
+              Logo
+            </div>
+            <div class="space-y-1">
+              <label class="inline-block px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-xs font-semibold text-white cursor-pointer transition">
+                Escolher Arquivo
+                <input id="modal-logo-input" type="file" accept="image/*" class="hidden">
+              </label>
+              <button onclick="clearModalLogo()" class="block text-[11px] text-rose-400 hover:underline">Remover logo salva</button>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-zinc-300 mb-1">Nome da Igreja</label>
+          <input id="modal-church-name" type="text" placeholder="Ex: Igreja Batista Renovada" class="w-full bg-studio-950 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:border-indigo-500 focus:outline-none">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-zinc-300 mb-1">Endereço / Bairro / Cidade</label>
+          <input id="modal-church-address" type="text" placeholder="Ex: Av. Central, 450 • Centro" class="w-full bg-studio-950 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:border-indigo-500 focus:outline-none">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-zinc-300 mb-1">@Instagram Oficial</label>
+          <input id="modal-church-ig" type="text" placeholder="Ex: @igrejabatistarenovada" class="w-full bg-studio-950 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:border-indigo-500 focus:outline-none">
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-2 pt-2">
+        <button onclick="closeChurchModal()" class="px-4 py-2 rounded-xl bg-studio-800 hover:bg-studio-700 text-xs font-semibold text-zinc-300 transition">Cancelar</button>
+        <button onclick="saveChurchConfig()" class="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-bold text-white shadow-lg shadow-indigo-500/20 transition">Salvar e Aplicar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== JAVASCRIPT CORE ENGINE ==================== -->
+  <script>
+    // =========================================================================
+    // 1. DATA DEFINITIONS: CATEGORIES, PALETTES, STICKERS & 32 TEMPLATES
+    // =========================================================================
+    const CATEGORIES = [
+      { id: 'all', name: 'Todos (32)', icon: '✨' },
+      { id: 'pregador', name: 'Pregador / Convidado', icon: '🎤' },
+      { id: 'familia', name: 'Culto da Família', icon: '🏡' },
+      { id: 'aniversariantes', name: 'Aniversariantes', icon: '🎂' },
+      { id: 'aovivo', name: 'Transmissão Ao Vivo', icon: '📡' },
+      { id: 'jovens', name: 'Jovens / Vigília', icon: '🔥' },
+      { id: 'ceia', name: 'Santa Ceia', icon: '🍷' },
+      { id: 'avisos', name: 'Avisos e Comunicados', icon: '📢' },
+      { id: 'ensino', name: 'Ensino / EBD / Oração', icon: '📖' }
+    ];
+
+    const PALETTES = [
+      { id: 'royal', name: 'Azul Royal', bg: '#091534', bg2: '#132a63', accent: '#3b82f6', text: '#ffffff' },
+      { id: 'goldblack', name: 'Ouro & Preto', bg: '#09090b', bg2: '#1c1917', accent: '#eab308', text: '#fafaf9' },
+      { id: 'winecream', name: 'Vinho & Creme', bg: '#260811', bg2: '#4a0f20', accent: '#e5c17d', text: '#fdf6ec' },
+      { id: 'purpleneon', name: 'Roxo Neon', bg: '#0f0524', bg2: '#260c54', accent: '#d946ef', text: '#ffffff' },
+      { id: 'emerald', name: 'Verde Esmeralda', bg: '#041f18', bg2: '#093d2e', accent: '#10b981', text: '#ecfdf5' },
+      { id: 'fire', name: 'Laranja Fogo', bg: '#1a0803', bg2: '#421606', accent: '#f97316', text: '#fff7ed' },
+      { id: 'softpink', name: 'Rosa Suave', bg: '#28111c', bg2: '#451d30', accent: '#f472b6', text: '#fdf2f8' },
+      { id: 'minimalgray', name: 'Cinza Minimalista', bg: '#16161a', bg2: '#27272e', accent: '#d4d4d8', text: '#ffffff' },
+      { id: 'cyantech', name: 'Ciano Tech', bg: '#041522', bg2: '#092c45', accent: '#06b6d4', text: '#f0f9ff' },
+      { id: 'terracotta', name: 'Terracota Quente', bg: '#24120b', bg2: '#422215', accent: '#ea8c55', text: '#fef6ee' },
+      { id: 'whitegold', name: 'Branco & Dourado', bg: '#f7f4ec', bg2: '#ebe4d3', accent: '#b48216', text: '#1c1917' },
+      { id: 'brutal', name: 'Brutalista P&B', bg: '#09090b', bg2: '#18181b', accent: '#facc15', text: '#ffffff' }
+    ];
+
+    const STICKERS = [
+      { id: 'aovivo', label: 'AO VIVO', color: '#ef4444', textColor: '#ffffff' },
+      { id: 'entrada', label: 'ENTRADA FRANCA', color: '#10b981', textColor: '#042f2e' },
+      { id: 'hoje', label: 'HOJE', color: '#f59e0b', textColor: '#18181b' },
+      { id: 'convidado', label: 'TRAGA UM CONVIDADO', color: '#6366f1', textColor: '#ffffff' }
+    ];
+
+    const FORMATS = {
+      portrait: { width: 1080, height: 1350, label: '1080 × 1350 px' },
+      story: { width: 1080, height: 1920, label: '1080 × 1920 px' },
+      landscape: { width: 1920, height: 1080, label: '1920 × 1080 px' }
+    };
+
+    // 32 Distinct Templates across 8 Themes
+    const TEMPLATES = [
+      // TEMA 1: PREGADOR / CONVIDADO
+      {
+        id: 'pregador-1', theme: 'pregador', variant: 1, name: 'Foto Recortada Grande',
+        defaultFormat: 'portrait', paletteId: 'goldblack', defaultShape: 'none',
+        tag: 'CONVIDADO ESPECIAL', title: 'PALAVRA DE AVIVAMENTO', subtitle: 'PR. LUCAS MENDES',
+        info: 'Domingo • 19h00 • Traga sua família'
+      },
+      {
+        id: 'pregador-2', theme: 'pregador', variant: 2, name: 'Moldura Circular Dourada',
+        defaultFormat: 'portrait', paletteId: 'royal', defaultShape: 'circle',
+        tag: 'NOITE PROFÉTICA', title: 'O TEMPO DA PROMESSA', subtitle: 'MISS. ANA CAROLINA',
+        info: 'Quinta-feira • 19h30 • Culto da Vitória'
+      },
+      {
+        id: 'pregador-3', theme: 'pregador', variant: 3, name: 'Estilo Revista / Moderno',
+        defaultFormat: 'portrait', paletteId: 'terracotta', defaultShape: 'rect',
+        tag: 'PREGADOR CONVIDADO', title: 'GRAÇA E PROPÓSITO', subtitle: 'PR. RAFAEL COSTA',
+        info: 'Sábado às 19h • Entrada Franca'
+      },
+      {
+        id: 'pregador-4', theme: 'pregador', variant: 4, name: 'Minimalista Clean',
+        defaultFormat: 'portrait', paletteId: 'whitegold', defaultShape: 'rounded',
+        tag: 'MINISTRAÇÃO DA PALAVRA', title: 'ALÉM DO VÉU', subtitle: 'BP. HENRIQUE ALVES',
+        info: 'Domingo • 18h30 • Culto de Celebração'
+      },
+
+      // TEMA 2: CULTO DA FAMÍLIA / DOMINGO
+      {
+        id: 'familia-1', theme: 'familia', variant: 1, name: 'Modelo Acolhedor Quente',
+        defaultFormat: 'portrait', paletteId: 'terracotta', defaultShape: 'rounded',
+        tag: 'DOMINGO DO SENHOR', title: 'CULTO DA FAMÍLIA', subtitle: 'Um lugar de paz, comunhão e esperança',
+        info: 'Horários: 09h30 (Manhã) e 18h30 (Noite)'
+      },
+      {
+        id: 'familia-2', theme: 'familia', variant: 2, name: 'Modelo Urbano / Jovem',
+        defaultFormat: 'portrait', paletteId: 'royal', defaultShape: 'rect',
+        tag: 'DOMINGO É DIA DE CASA', title: 'VIDA EM FAMÍLIA', subtitle: 'Venha celebrar com toda a sua casa',
+        info: 'Domingo • 18h00 • Espaço Kids disponível'
+      },
+      {
+        id: 'familia-3', theme: 'familia', variant: 3, name: 'Modelo Clássico Elegante',
+        defaultFormat: 'portrait', paletteId: 'winecream', defaultShape: 'circle',
+        tag: 'SOLENE CULTO DOMINICAL', title: 'BENÇÃOS SOBRE O LAR', subtitle: '"Eu e a minha casa serviremos ao Senhor"',
+        info: 'Domingo às 18h30 • Josué 24:15'
+      },
+      {
+        id: 'familia-4', theme: 'familia', variant: 4, name: 'Modelo Tipografia Gigante',
+        defaultFormat: 'portrait', paletteId: 'brutal', defaultShape: 'none',
+        tag: 'ESTE DOMINGO', title: 'FAMÍLIA NO ALTAR', subtitle: 'Culto de Adoração e Palavra',
+        info: 'Domingo • 19h00 • Não falte!'
+      },
+
+      // TEMA 3: ANIVERSARIANTES
+      {
+        id: 'aniversariantes-1', theme: 'aniversariantes', variant: 1, name: 'Aniversariante Único',
+        defaultFormat: 'portrait', paletteId: 'goldblack', defaultShape: 'circle',
+        tag: 'FELIZ ANIVERSÁRIO', title: 'PARABÉNS!', subtitle: 'MARIANA FERREIRA',
+        info: 'Que o Senhor abençoe e guarde sua vida abundantemente!'
+      },
+      {
+        id: 'aniversariantes-2', theme: 'aniversariantes', variant: 2, name: 'Aniversariantes do Mês (4 Fotos)',
+        defaultFormat: 'portrait', paletteId: 'royal', defaultShape: 'circle', multiPhoto: 4,
+        tag: 'CELEBRANDO VIDAS', title: 'ANIVERSARIANTES DO MÊS', subtitle: 'Nossa igreja celebra com vocês!',
+        info: 'Que Deus multiplique graça, saúde e paz sobre cada vida.'
+      },
+      {
+        id: 'aniversariantes-3', theme: 'aniversariantes', variant: 3, name: 'Festivo Moderno',
+        defaultFormat: 'portrait', paletteId: 'purpleneon', defaultShape: 'rounded',
+        tag: 'DIA DE FESTA', title: 'FELIZ NOVO CICLO!', subtitle: 'JOÃO PEDRO SANTOS',
+        info: 'Números 6:24 • O Senhor te abençoe e te guarde!'
+      },
+      {
+        id: 'aniversariantes-4', theme: 'aniversariantes', variant: 4, name: 'Elegante Pastel / Dourado',
+        defaultFormat: 'portrait', paletteId: 'whitegold', defaultShape: 'circle',
+        tag: 'GRATIDÃO PELA SUA VIDA', title: 'PARABÉNS!', subtitle: 'PASTORA CLÁUDIA LIMA',
+        info: 'Com carinho de toda a igreja • Salmos 20:4'
+      },
+
+      // TEMA 4: TRANSMISSÃO AO VIVO / YOUTUBE
+      {
+        id: 'aovivo-1', theme: 'aovivo', variant: 1, name: 'Capa Estilo Neon / Tech',
+        defaultFormat: 'landscape', paletteId: 'cyantech', defaultShape: 'rounded',
+        tag: 'TRANSMISSÃO ONLINE', title: 'CULTO AO VIVO', subtitle: 'Conecte-se e adore conosco de onde estiver',
+        info: 'Curta, comente e compartilhe esta mensagem!'
+      },
+      {
+        id: 'aovivo-2', theme: 'aovivo', variant: 2, name: 'Capa Clássica com Foto',
+        defaultFormat: 'landscape', paletteId: 'royal', defaultShape: 'none',
+        tag: 'SÉRIE DE MENSAGENS', title: 'FÉ QUE MOVE MONTANHAS', subtitle: 'PR. GABRIEL ROCHA',
+        info: 'Transmissão simultânea • Domingo às 19h'
+      },
+      {
+        id: 'aovivo-3', theme: 'aovivo', variant: 3, name: 'Capa Minimalista "Estamos Ao Vivo"',
+        defaultFormat: 'landscape', paletteId: 'minimalgray', defaultShape: 'circle',
+        tag: 'AO VIVO AGORA', title: 'ESTAMOS AO VIVO', subtitle: 'Culto de Adoração e Ensino da Palavra',
+        info: 'Ative o sininho e inscreva-se no canal'
+      },
+      {
+        id: 'aovivo-4', theme: 'aovivo', variant: 4, name: 'Capa Especial Conferências',
+        defaultFormat: 'landscape', paletteId: 'fire', defaultShape: 'rect',
+        tag: 'CONFERÊNCIA ANUAL', title: 'REINO EM MOVIMENTO', subtitle: 'Sessão de Abertura • Ao Vivo',
+        info: '14 a 16 de Novembro • Transmissão Oficial'
+      },
+
+      // TEMA 5: JOVENS / VIGÍLIA / CONFERÊNCIA
+      {
+        id: 'jovens-1', theme: 'jovens', variant: 1, name: 'Estilo Street / Grunge',
+        defaultFormat: 'portrait', paletteId: 'brutal', defaultShape: 'rect',
+        tag: 'GERAÇÃO ELEITA', title: 'CULTO JOVEM', subtitle: 'Sem filtros. Sem limites. Só Jesus.',
+        info: 'Sábado • 19h30 • Convide seus amigos!'
+      },
+      {
+        id: 'jovens-2', theme: 'jovens', variant: 2, name: 'Estilo Neon Cyberpunk',
+        defaultFormat: 'portrait', paletteId: 'purpleneon', defaultShape: 'rounded',
+        tag: 'VIGÍLIA DA JUVENTUDE', title: 'MADRUGADA DE GLÓRIA', subtitle: 'Das 23h até o amanhecer',
+        info: 'Sexta-feira • Louvor, Palavra e Intercessão'
+      },
+      {
+        id: 'jovens-3', theme: 'jovens', variant: 3, name: 'Estilo Tipografia Brutalista',
+        defaultFormat: 'portrait', paletteId: 'minimalgray', defaultShape: 'none',
+        tag: 'CONFERÊNCIA JOVEM', title: 'DESPERTA', subtitle: 'EFÉSIOS 5:14 • NÃO DURMA',
+        info: 'Sábado • 19h00 • Auditório Principal'
+      },
+      {
+        id: 'jovens-4', theme: 'jovens', variant: 4, name: 'Estilo Fogo / Avivamento',
+        defaultFormat: 'portrait', paletteId: 'fire', defaultShape: 'circle',
+        tag: 'NOITE DE PODER', title: 'FOGO NO ALTAR', subtitle: 'O fogo arderá continuamente sobre o altar',
+        info: 'Sexta às 22h • Vigília de Avivamento'
+      },
+
+      // TEMA 6: SANTA CEIA DO SENHOR
+      {
+        id: 'ceia-1', theme: 'ceia', variant: 1, name: 'Solene Vinho & Ouro',
+        defaultFormat: 'portrait', paletteId: 'winecream', defaultShape: 'circle',
+        tag: 'MEMORIAL DO SENHOR', title: 'SANTA CEIA', subtitle: 'Fazei isto em memória de mim',
+        info: '1º Domingo do Mês • 18h30 • 1 Coríntios 11:24'
+      },
+      {
+        id: 'ceia-2', theme: 'ceia', variant: 2, name: 'Minimalista Branco & Dourado',
+        defaultFormat: 'portrait', paletteId: 'whitegold', defaultShape: 'rounded',
+        tag: 'CULTO DA ALIANÇA', title: 'CEIA DO SENHOR', subtitle: 'Um tempo de consagração e gratidão',
+        info: 'Domingo às 18h30 • Participe conosco'
+      },
+      {
+        id: 'ceia-3', theme: 'ceia', variant: 3, name: 'Estilo Moderno Escuro',
+        defaultFormat: 'portrait', paletteId: 'goldblack', defaultShape: 'none',
+        tag: 'MESA DO SENHOR', title: 'SANTA CEIA', subtitle: 'Pelo Seu sangue fomos comprados',
+        info: 'Domingo • 09h30 e 18h30'
+      },
+      {
+        id: 'ceia-4', theme: 'ceia', variant: 4, name: 'Clássico com Versículo',
+        defaultFormat: 'portrait', paletteId: 'emerald', defaultShape: 'rect',
+        tag: 'COMUNHÃO NO CORPO', title: 'SANTA CEIA DO SENHOR', subtitle: 'Porque todas as vezes que comerdes este pão...',
+        info: '...e beberdes este cálice, anunciais a morte do Senhor até que venha. (1 Co 11:26)'
+      },
+
+      // TEMA 7: AVISOS E COMUNICADOS
+      {
+        id: 'avisos-1', theme: 'avisos', variant: 1, name: 'Aviso Urgente / Importante',
+        defaultFormat: 'portrait', paletteId: 'fire', defaultShape: 'none',
+        tag: 'AVISO IMPORTANTE', title: 'ATENÇÃO IGREJA!', subtitle: 'Leia com atenção este comunicado oficial',
+        info: 'Por motivo de força maior, nossa programação deste sábado foi transferida para o templo central.'
+      },
+      {
+        id: 'avisos-2', theme: 'avisos', variant: 2, name: 'Programação da Semana',
+        defaultFormat: 'portrait', paletteId: 'royal', defaultShape: 'none',
+        tag: 'AGENDA MINISTERIAL', title: 'PROGRAMAÇÃO DA SEMANA', subtitle: 'Programe-se e participe dos nossos cultos',
+        info: 'TER | 19h30 - Culto de Oração\nQUI | 19h30 - Culto de Ensino\nSAB | 19h00 - Encontro de Jovens\nDOM | 18h30 - Culto da Família'
+      },
+      {
+        id: 'avisos-3', theme: 'avisos', variant: 3, name: 'Mudança de Horário / Local',
+        defaultFormat: 'portrait', paletteId: 'cyantech', defaultShape: 'none',
+        tag: 'COMUNICADO', title: 'NOVO HORÁRIO', subtitle: 'A partir deste domingo, o culto noturno será:',
+        info: 'NOVO HORÁRIO: 18H00\nLocal: Templo Sede • Av. Central, 450'
+      },
+      {
+        id: 'avisos-4', theme: 'avisos', variant: 4, name: 'Aviso de Oração / Jejum',
+        defaultFormat: 'portrait', paletteId: 'emerald', defaultShape: 'none',
+        tag: 'PROPÓSITO ESPIRITUAL', title: 'SEMANA DE JEJUM E ORAÇÃO', subtitle: 'Clamando por avivamento e famílias',
+        info: 'De Segunda a Sexta • 06h00 às 07h00 (Presencial) e 21h00 (Online)'
+      },
+
+      // TEMA 8: CULTO DE ENSINO / EBD / ORAÇÃO
+      {
+        id: 'ensino-1', theme: 'ensino', variant: 1, name: 'Estudo Bíblico Moderno',
+        defaultFormat: 'portrait', paletteId: 'royal', defaultShape: 'rounded',
+        tag: 'QUINTA DO CONHECIMENTO', title: 'CULTO DE ENSINO', subtitle: 'Aprofundando nas Escrituras Sagradas',
+        info: 'Todas as Quintas • 19h30 • Traga sua Bíblia'
+      },
+      {
+        id: 'ensino-2', theme: 'ensino', variant: 2, name: 'Oração da Madrugada',
+        defaultFormat: 'portrait', paletteId: 'purpleneon', defaultShape: 'none',
+        tag: 'BUSCANDO AO SENHOR', title: 'ORAÇÃO DA MADRUGADA', subtitle: 'Os que me buscam de madrugada me acharão',
+        info: 'Terças e Sextas • 05h30 da manhã • Provérbios 8:17'
+      },
+      {
+        id: 'ensino-3', theme: 'ensino', variant: 3, name: 'Escola Bíblica Dominical',
+        defaultFormat: 'portrait', paletteId: 'whitegold', defaultShape: 'rect',
+        tag: 'TODOS OS DOMINGOS', title: 'ESCOLA BÍBLICA DOMINICAL', subtitle: 'Classes para Crianças, Jovens e Adultos',
+        info: 'Domingo às 09h00 • Aprenda a Palavra de Deus'
+      },
+      {
+        id: 'ensino-4', theme: 'ensino', variant: 4, name: 'Células / Pequenos Grupos',
+        defaultFormat: 'portrait', paletteId: 'emerald', defaultShape: 'circle',
+        tag: 'IGREJA NOS LARES', title: 'NOITE DE CÉLULAS', subtitle: 'Comunhão, oração e partilha perto de você',
+        info: 'Quartas-feiras • 20h00 • Procure o líder da sua região'
+      }
+    ];
+
+    // =========================================================================
+    // 2. APPLICATION STATE & CHURCH MEMORY (localStorage)
+    // =========================================================================
+    const STORAGE_KEY = 'midiaIgrejaStudio_churchConfig_v1';
+
+    let churchConfig = {
+      name: 'Igreja Evangélica Esperança',
+      address: 'Av. Brasil, 1200 • Centro',
+      instagram: '@igrejaesperanca',
+      logoDataUrl: null,
+      logoImg: null
+    };
+
+    let activeCategory = 'all';
+    let currentTemplate = TEMPLATES[0];
+
+    function createEmptyPhotoSlot(defaultName = '') {
+      return { img: null, zoom: 1, x: 0, y: 0, shape: 'circle', name: defaultName };
+    }
+
+    let editorState = {
+      format: 'portrait',
+      tag: '',
+      title: '',
+      titleSize: 100,
+      subtitle: '',
+      info: '',
+      church: '',
+      address: '',
+      instagram: '',
+      colors: { bg: '#09090b', bg2: '#1c1917', accent: '#eab308', text: '#fafaf9' },
+      stickers: [],
+      showLogo: true,
+      customLogoImg: null,
+      photos: [
+        createEmptyPhotoSlot('Ana Beatriz'),
+        createEmptyPhotoSlot('Carlos Eduardo'),
+        createEmptyPhotoSlot('Juliana Souza'),
+        createEmptyPhotoSlot('Pedro Henrique')
+      ]
+    };
+
+    // Cached offscreen grain pattern
+    let grainPatternCanvas = null;
+    function getGrainCanvas() {
+      if (grainPatternCanvas) return grainPatternCanvas;
+      const c = document.createElement('canvas');
+      c.width = 160;
+      c.height = 160;
+      const g = c.getContext('2d');
+      const imgData = g.createImageData(160, 160);
+      for (let i = 0; i < imgData.data.length; i += 4) {
+        const v = Math.random() * 255;
+        imgData.data[i] = v;
+        imgData.data[i + 1] = v;
+        imgData.data[i + 2] = v;
+        imgData.data[i + 3] = 16;
+      }
+      g.putImageData(imgData, 0, 0);
+      grainPatternCanvas = c;
+      return c;
+    }
+
+    // Load church config from localStorage
+    function loadChurchConfig() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          churchConfig = { ...churchConfig, ...parsed, logoImg: null };
+          if (churchConfig.logoDataUrl) {
+            const img = new Image();
+            img.onload = () => {
+              churchConfig.logoImg = img;
+              updateChurchSavedIndicator();
+              if (!document.getElementById('editor-view').classList.contains('hidden')) {
+                renderStudio();
+              } else {
+                renderGalleryThumbnails();
+              }
+            };
+            img.src = churchConfig.logoDataUrl;
+          }
+        }
+      } catch (e) { console.warn('Erro ao ler localStorage', e); }
+      updateChurchSavedIndicator();
+    }
+
+    function updateChurchSavedIndicator() {
+      const dot = document.getElementById('church-saved-dot');
+      if (localStorage.getItem(STORAGE_KEY)) dot.classList.remove('hidden');
+      else dot.classList.add('hidden');
+    }
+
+    // =========================================================================
+    // 3. CANVAS DRAWING HELPERS (PROCEDURAL GRAPHICS & TYPOGRAPHY)
+    // =========================================================================
+    function hexToRgb(hex) {
+      let c = (hex || '#000000').replace('#', '');
+      if (c.length === 3) c = c.split('').map(x => x + x).join('');
+      const num = parseInt(c, 16);
+      return { r: (num >> 16) & 255, g: (num >> 8) & 255, b: num & 255 };
+    }
+
+    function rgba(hex, alpha) {
+      const { r, g, b } = hexToRgb(hex);
+      return `rgba(${r},${g},${b},${alpha})`;
+    }
+
+    function isColorLight(hex) {
+      const { r, g, b } = hexToRgb(hex);
+      return (r * 299 + g * 587 + b * 114) / 1000 > 155;
+    }
+
+    function roundRectPath(ctx, x, y, w, h, r) {
+      const radius = Math.min(r, w / 2, h / 2);
+      ctx.beginPath();
+      ctx.moveTo(x + radius, y);
+      ctx.arcTo(x + w, y, x + w, y + h, radius);
+      ctx.arcTo(x + w, y + h, x, y + h, radius);
+      ctx.arcTo(x, y + h, x, y, radius);
+      ctx.arcTo(x, y, x + w, y, radius);
+      ctx.closePath();
+    }
+
+    function wrapText(ctx, text, maxWidth) {
+      if (!text) return [];
+      const paragraphs = String(text).split('\n');
+      const lines = [];
+      for (const p of paragraphs) {
+        const words = p.trim().split(/\s+/);
+        let line = '';
+        for (let i = 0; i < words.length; i++) {
+          const testLine = line ? line + ' ' + words[i] : words[i];
+          if (ctx.measureText(testLine).width > maxWidth && line) {
+            lines.push(line);
+            line = words[i];
+          } else {
+            line = testLine;
+          }
+        }
+        if (line || p === '') lines.push(line);
+      }
+      return lines;
+    }
+
+    function drawWrappedText(ctx, text, x, y, maxWidth, lineHeight, maxLines = 10) {
+      const lines = wrapText(ctx, text, maxWidth).slice(0, maxLines);
+      lines.forEach((l, idx) => {
+        ctx.fillText(l, x, y + idx * lineHeight);
+      });
+      return lines.length * lineHeight;
+    }
+
+    function drawAutoTitle(ctx, text, x, y, maxWidth, baseSize, fontFamily, fontWeight = '800', align = 'center', maxLines = 3, lineSpacing = 1.05) {
+      let size = baseSize;
+      ctx.textAlign = align;
+      ctx.textBaseline = 'top';
+      while (size > baseSize * 0.45) {
+        ctx.font = `${fontWeight} ${size}px ${fontFamily}`;
+        const lines = wrapText(ctx, text.toUpperCase(), maxWidth);
+        const longest = Math.max(...lines.map(l => ctx.measureText(l).width), 0);
+        if (lines.length <= maxLines && longest <= maxWidth) {
+          lines.forEach((l, i) => ctx.fillText(l, x, y + i * size * lineSpacing));
+          return lines.length * size * lineSpacing;
+        }
+        size -= 4;
+      }
+      ctx.font = `${fontWeight} ${size}px ${fontFamily}`;
+      const lines = wrapText(ctx, text.toUpperCase(), maxWidth).slice(0, maxLines);
+      lines.forEach((l, i) => ctx.fillText(l, x, y + i * size * lineSpacing));
+      return lines.length * size * lineSpacing;
+    }
+
+    function drawPill(ctx, text, cx, y, bgColor, textColor, fontSize, padX = 28, padY = 12, radius = 999) {
+      if (!text) return 0;
+      ctx.save();
+      ctx.font = `700 ${fontSize}px 'Montserrat', sans-serif`;
+      const tw = ctx.measureText(text.toUpperCase()).width;
+      const w = tw + padX * 2;
+      const h = fontSize + padY * 2;
+      roundRectPath(ctx, cx - w / 2, y, w, h, radius);
+      ctx.fillStyle = bgColor;
+      ctx.fill();
+      ctx.fillStyle = textColor;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(text.toUpperCase(), cx, y + h / 2 + 1);
+      ctx.restore();
+      return h;
+    }
+
+    // Procedural Avatar Silhouette when user hasn't uploaded a photo yet
+    function drawPhotoPlaceholder(ctx, cx, cy, w, h, colors) {
+      ctx.save();
+      const grad = ctx.createLinearGradient(cx - w / 2, cy - h / 2, cx + w / 2, cy + h / 2);
+      grad.addColorStop(0, rgba(colors.accent, 0.25));
+      grad.addColorStop(1, rgba(colors.bg2, 0.9));
+      ctx.fillStyle = grad;
+      ctx.fillRect(cx - w / 2, cy - h / 2, w, h);
+
+      // Stylized silhouette
+      ctx.fillStyle = rgba(colors.text, 0.22);
+      const headR = Math.min(w, h) * 0.17;
+      ctx.beginPath();
+      ctx.arc(cx, cy - h * 0.1, headR, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.ellipse(cx, cy + h * 0.34, headR * 2.1, headR * 1.85, 0, Math.PI, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = rgba(colors.text, 0.45);
+      ctx.font = `600 ${Math.max(14, Math.round(Math.min(w, h) * 0.065))}px 'Inter', sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('SUA FOTO AQUI', cx, cy + h * 0.34);
+      ctx.restore();
+    }
+
+    // Draw Photo with Shape, Zoom, Pan, Border & Optional Soft Bottom Fade
+    function drawPhotoFrame(ctx, photoSlot, x, y, w, h, colors, options = {}) {
+      const shape = options.forceShape || photoSlot.shape || 'circle';
+      const borderWidth = options.borderWidth ?? (shape === 'none' ? 0 : 6);
+      const borderColor = options.borderColor || colors.accent;
+      const glow = options.glow ?? true;
+      const bottomFade = options.bottomFade ?? (shape === 'none');
+
+      ctx.save();
+      const cx = x + w / 2;
+      const cy = y + h / 2;
+
+      if (glow && shape !== 'none') {
+        ctx.shadowColor = rgba(borderColor, 0.45);
+        ctx.shadowBlur = 35;
+      }
+
+      // Clip path
+      if (shape === 'circle') {
+        const r = Math.min(w, h) / 2;
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, 0, Math.PI * 2);
+      } else if (shape === 'rounded') {
+        roundRectPath(ctx, x, y, w, h, Math.min(w, h) * 0.1);
+      } else {
+        ctx.beginPath();
+        ctx.rect(x, y, w, h);
+      }
+
+      ctx.save();
+      ctx.clip();
+
+      if (photoSlot.img) {
+        const img = photoSlot.img;
+        const scaleBase = Math.max(w / img.width, h / img.height);
+        const scale = scaleBase * (photoSlot.zoom || 1);
+        const dw = img.width * scale;
+        const dh = img.height * scale;
+        const dx = cx - dw / 2 + (photoSlot.x || 0) * (w * 0.005);
+        const dy = cy - dh / 2 + (photoSlot.y || 0) * (h * 0.005);
+        ctx.drawImage(img, dx, dy, dw, dh);
+      } else {
+        drawPhotoPlaceholder(ctx, cx, cy, w, h, colors);
+      }
+
+      if (bottomFade) {
+        const fade = ctx.createLinearGradient(0, y + h * 0.42, 0, y + h);
+        fade.addColorStop(0, rgba(colors.bg, 0));
+        fade.addColorStop(0.7, rgba(colors.bg, 0.85));
+        fade.addColorStop(1, colors.bg);
+        ctx.fillStyle = fade;
+        ctx.fillRect(x, y, w, h);
+      }
+      ctx.restore();
+
+      // Draw border stroke
+      if (borderWidth > 0 && shape !== 'none') {
+        ctx.shadowBlur = 0;
+        ctx.lineWidth = borderWidth;
+        ctx.strokeStyle = borderColor;
+        if (shape === 'circle') {
+          ctx.beginPath();
+          ctx.arc(cx, cy, Math.min(w, h) / 2, 0, Math.PI * 2);
+          ctx.stroke();
+        } else if (shape === 'rounded') {
+          roundRectPath(ctx, x, y, w, h, Math.min(w, h) * 0.1);
+          ctx.stroke();
+        } else {
+          ctx.strokeRect(x, y, w, h);
+        }
+      }
+      ctx.restore();
+    }
+
+    // Procedural Background Effects
+    function drawBaseBackground(ctx, W, H, colors, style = 'radial') {
+      if (style === 'linear') {
+        const g = ctx.createLinearGradient(0, 0, W, H);
+        g.addColorStop(0, colors.bg);
+        g.addColorStop(1, colors.bg2);
+        ctx.fillStyle = g;
+        ctx.fillRect(0, 0, W, H);
+      } else {
+        ctx.fillStyle = colors.bg;
+        ctx.fillRect(0, 0, W, H);
+        const g = ctx.createRadialGradient(W * 0.5, H * 0.35, W * 0.05, W * 0.5, H * 0.45, Math.max(W, H) * 0.85);
+        g.addColorStop(0, colors.bg2);
+        g.addColorStop(1, colors.bg);
+        ctx.fillStyle = g;
+        ctx.fillRect(0, 0, W, H);
+      }
+      // Subtle glow spot
+      const glow = ctx.createRadialGradient(W * 0.5, H * 0.28, 10, W * 0.5, H * 0.28, Math.max(W, H) * 0.55);
+      glow.addColorStop(0, rgba(colors.accent, 0.22));
+      glow.addColorStop(1, rgba(colors.accent, 0));
+      ctx.fillStyle = glow;
+      ctx.fillRect(0, 0, W, H);
+    }
+
+    function drawDotGrid(ctx, startX, startY, cols, rows, spacing, radius, color) {
+      ctx.save();
+      ctx.fillStyle = color;
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          ctx.beginPath();
+          ctx.arc(startX + c * spacing, startY + r * spacing, radius, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+
+    function drawLightBeams(ctx, W, H, color, count = 4) {
+      ctx.save();
+      for (let i = 0; i < count; i++) {
+        const startX = W * (0.15 + (i / Math.max(1, count - 1)) * 0.7);
+        const grad = ctx.createLinearGradient(startX, 0, startX, H * 0.85);
+        grad.addColorStop(0, rgba(color, 0.22));
+        grad.addColorStop(1, rgba(color, 0));
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.moveTo(startX - W * 0.04, 0);
+        ctx.lineTo(startX + W * 0.04, 0);
+        ctx.lineTo(startX + W * 0.24, H * 0.85);
+        ctx.lineTo(startX - W * 0.24, H * 0.85);
+        ctx.closePath();
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    function drawSunburst(ctx, cx, cy, outerR, rays, color) {
+      ctx.save();
+      ctx.fillStyle = color;
+      const step = (Math.PI * 2) / rays;
+      for (let i = 0; i < rays; i += 2) {
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.arc(cx, cy, outerR, i * step, (i + 1) * step);
+        ctx.closePath();
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    function drawNoise(ctx, W, H) {
+      ctx.save();
+      const pat = ctx.createPattern(getGrainCanvas(), 'repeat');
+      if (pat) {
+        ctx.fillStyle = pat;
+        ctx.fillRect(0, 0, W, H);
+      }
+      ctx.restore();
+    }
+
+    // Procedural Religious & Event Vector Icons
+    function drawChaliceIcon(ctx, cx, cy, size, color) {
+      ctx.save();
+      ctx.strokeStyle = color;
+      ctx.fillStyle = rgba(color, 0.15);
+      ctx.lineWidth = Math.max(3, size * 0.055);
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+
+      // Cup
+      ctx.beginPath();
+      ctx.moveTo(cx - size * 0.36, cy - size * 0.4);
+      ctx.lineTo(cx + size * 0.36, cy - size * 0.4);
+      ctx.bezierCurveTo(cx + size * 0.36, cy + size * 0.08, cx + size * 0.08, cy + size * 0.1, cx, cy + size * 0.14);
+      ctx.bezierCurveTo(cx - size * 0.08, cy + size * 0.1, cx - size * 0.36, cy + size * 0.08, cx - size * 0.36, cy - size * 0.4);
+      ctx.fill();
+      ctx.stroke();
+
+      // Stem & Base
+      ctx.beginPath();
+      ctx.moveTo(cx, cy + size * 0.14);
+      ctx.lineTo(cx, cy + size * 0.42);
+      ctx.moveTo(cx - size * 0.26, cy + size * 0.42);
+      ctx.lineTo(cx + size * 0.26, cy + size * 0.42);
+      ctx.stroke();
+
+      // Hostia/Bread circle above
+      ctx.beginPath();
+      ctx.arc(cx, cy - size * 0.56, size * 0.14, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function drawCrossIcon(ctx, cx, cy, size, color, strokeOnly = false) {
+      ctx.save();
+      ctx.strokeStyle = color;
+      ctx.fillStyle = color;
+      ctx.lineWidth = Math.max(3, size * 0.08);
+      ctx.lineCap = 'round';
+      if (strokeOnly) {
+        ctx.beginPath();
+        ctx.moveTo(cx, cy - size * 0.5);
+        ctx.lineTo(cx, cy + size * 0.5);
+        ctx.moveTo(cx - size * 0.34, cy - size * 0.16);
+        ctx.lineTo(cx + size * 0.34, cy - size * 0.16);
+        ctx.stroke();
+      } else {
+        const t = size * 0.16;
+        ctx.fillRect(cx - t / 2, cy - size * 0.5, t, size);
+        ctx.fillRect(cx - size * 0.35, cy - size * 0.22, size * 0.7, t);
+      }
+      ctx.restore();
+    }
+
+    function drawAlertIcon(ctx, cx, cy, size, color) {
+      ctx.save();
+      ctx.strokeStyle = color;
+      ctx.fillStyle = rgba(color, 0.18);
+      ctx.lineWidth = Math.max(4, size * 0.07);
+      ctx.lineJoin = 'round';
+      ctx.beginPath();
+      ctx.moveTo(cx, cy - size * 0.45);
+      ctx.lineTo(cx + size * 0.46, cy + size * 0.38);
+      ctx.lineTo(cx - size * 0.46, cy + size * 0.38);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = color;
+      ctx.fillRect(cx - size * 0.04, cy - size * 0.16, size * 0.08, size * 0.3);
+      ctx.beginPath();
+      ctx.arc(cx, cy + size * 0.25, size * 0.05, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function drawBibleIcon(ctx, cx, cy, size, color) {
+      ctx.save();
+      ctx.strokeStyle = color;
+      ctx.fillStyle = rgba(color, 0.14);
+      ctx.lineWidth = Math.max(3, size * 0.055);
+      ctx.lineJoin = 'round';
+      // Left page
+      ctx.beginPath();
+      ctx.moveTo(cx, cy - size * 0.25);
+      ctx.quadraticCurveTo(cx - size * 0.25, cy - size * 0.38, cx - size * 0.48, cy - size * 0.26);
+      ctx.lineTo(cx - size * 0.48, cy + size * 0.28);
+      ctx.quadraticCurveTo(cx - size * 0.25, cy + size * 0.18, cx, cy + size * 0.32);
+      // Right page
+      ctx.quadraticCurveTo(cx + size * 0.25, cy + size * 0.18, cx + size * 0.48, cy + size * 0.28);
+      ctx.lineTo(cx + size * 0.48, cy - size * 0.26);
+      ctx.quadraticCurveTo(cx + size * 0.25, cy - size * 0.38, cx, cy - size * 0.25);
+      ctx.fill();
+      ctx.stroke();
+      // Spine
+      ctx.beginPath();
+      ctx.moveTo(cx, cy - size * 0.25);
+      ctx.lineTo(cx, cy + size * 0.32);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function drawConfetti(ctx, W, H, accent, textCol) {
+      ctx.save();
+      const cols = [accent, '#f472b6', '#38bdf8', '#facc15', rgba(textCol, 0.6)];
+      // Deterministic pseudo-random so thumbnails don't flicker
+      for (let i = 0; i < 38; i++) {
+        const px = ((i * 197 + 43) % 100) / 100 * W;
+        const py = ((i * 263 + 17) % 100) / 100 * H;
+        const sz = 8 + (i % 5) * 4;
+        ctx.fillStyle = cols[i % cols.length];
+        ctx.globalAlpha = 0.55;
+        ctx.save();
+        ctx.translate(px, py);
+        ctx.rotate((i * 37) * Math.PI / 180);
+        if (i % 3 === 0) {
+          ctx.beginPath(); ctx.arc(0, 0, sz * 0.45, 0, Math.PI * 2); ctx.fill();
+        } else {
+          ctx.fillRect(-sz / 2, -sz / 4, sz, sz * 0.45);
+        }
+        ctx.restore();
+      }
+      ctx.restore();
+    }
+
+    function drawEmbers(ctx, W, H, accent) {
+      ctx.save();
+      for (let i = 0; i < 45; i++) {
+        const px = ((i * 173 + 29) % 100) / 100 * W;
+        const py = H - (((i * 211 + 11) % 85) / 100 * H);
+        const r = 2 + (i % 6) * 2.2;
+        const g = ctx.createRadialGradient(px, py, 0, px, py, r * 2.5);
+        g.addColorStop(0, '#fde047');
+        g.addColorStop(0.5, rgba(accent, 0.7));
+        g.addColorStop(1, rgba(accent, 0));
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.arc(px, py, r * 2.5, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    // Footer + Logo + Stickers Overlay (Shared across all 32 templates cleanly)
+    function drawFooter(ctx, W, H, state, customY = null) {
+      const colors = state.colors;
+      const footerH = H > W ? 105 : 88;
+      const y = customY ?? (H - footerH);
+
+      ctx.save();
+      // Subtle divider line
+      ctx.strokeStyle = rgba(colors.text, 0.16);
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(W * 0.08, y);
+      ctx.lineTo(W * 0.92, y);
+      ctx.stroke();
+
+      const midY = y + footerH * 0.5;
+      ctx.fillStyle = rgba(colors.text, 0.88);
+      ctx.textBaseline = 'middle';
+
+      const igText = state.instagram || '';
+      const addrText = state.address || '';
+      const churchText = state.church || '';
+
+      if (W > H) {
+        // Landscape footer: Left church, Center address, Right IG
+        ctx.font = `700 22px 'Montserrat', sans-serif`;
+        ctx.textAlign = 'left';
+        ctx.fillText(churchText.toUpperCase(), W * 0.06, midY);
+
+        ctx.font = `500 20px 'Inter', sans-serif`;
+        ctx.fillStyle = rgba(colors.text, 0.68);
+        ctx.textAlign = 'center';
+        ctx.fillText(addrText, W * 0.5, midY);
+
+        ctx.font = `700 22px 'Montserrat', sans-serif`;
+        ctx.fillStyle = colors.accent;
+        ctx.textAlign = 'right';
+        ctx.fillText(igText, W * 0.94, midY);
+      } else {
+        // Portrait / Story stacked crisp footer
+        ctx.textAlign = 'center';
+        ctx.font = `700 23px 'Montserrat', sans-serif`;
+        ctx.fillText(churchText.toUpperCase(), W * 0.5, y + footerH * 0.34);
+
+        const sub = [addrText, igText].filter(Boolean).join('  •  ');
+        ctx.font = `500 20px 'Inter', sans-serif`;
+        ctx.fillStyle = rgba(colors.text, 0.72);
+        ctx.fillText(sub, W * 0.5, y + footerH * 0.68);
+      }
+      ctx.restore();
+    }
+
+    function drawLogoAndStickers(ctx, W, H, state) {
+      const logoImg = state.customLogoImg || churchConfig.logoImg;
+      // Draw Church Logo at Top Left or Top Right cleanly
+      if (state.showLogo && logoImg) {
+        ctx.save();
+        const maxH = W > H ? 74 : 84;
+        const maxW = 190;
+        const scale = Math.min(maxW / logoImg.width, maxH / logoImg.height);
+        const lw = logoImg.width * scale;
+        const lh = logoImg.height * scale;
+        ctx.shadowColor = 'rgba(0,0,0,0.45)';
+        ctx.shadowBlur = 12;
+        ctx.drawImage(logoImg, W * 0.055, H * 0.04, lw, lh);
+        ctx.restore();
+      }
+
+      // Draw Active Stickers at Top Right stacked nicely
+      if (state.stickers && state.stickers.length > 0) {
+        ctx.save();
+        let curY = H * 0.042;
+        const rightX = W * 0.945;
+        state.stickers.forEach(sid => {
+          const st = STICKERS.find(s => s.id === sid);
+          if (!st) return;
+          ctx.font = `800 22px 'Montserrat', sans-serif`;
+          const tw = ctx.measureText(st.label).width;
+          const bw = tw + 36;
+          const bh = 44;
+
+          ctx.shadowColor = 'rgba(0,0,0,0.4)';
+          ctx.shadowBlur = 14;
+          roundRectPath(ctx, rightX - bw, curY, bw, bh, 10);
+          ctx.fillStyle = st.color;
+          ctx.fill();
+
+          ctx.shadowBlur = 0;
+          ctx.fillStyle = st.textColor;
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          if (sid === 'aovivo') {
+            // Red dot indicator
+            ctx.fillText('● ' + st.label, rightX - bw / 2, curY + bh / 2 + 1);
+          } else {
+            ctx.fillText(st.label, rightX - bw / 2, curY + bh / 2 + 1);
+          }
+          curY += bh + 12;
+        });
+        ctx.restore();
+      }
+    }
+
+    // =========================================================================
+    // 4. MASTER TEMPLATE RENDERER (ALL 32 LAYOUTS ADAPTIVE TO 3 FORMATS)
+    // =========================================================================
+    function renderArtToCanvas(canvas, tpl, state) {
+      const fmt = FORMATS[state.format || tpl.defaultFormat || 'portrait'];
+      const W = fmt.width;
+      const H = fmt.height;
+      if (canvas.width !== W || canvas.height !== H) {
+        canvas.width = W;
+        canvas.height = H;
+      }
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, W, H);
+
+      const c = state.colors;
+      const isLand = W > H;
+      const isStory = H > W * 1.5;
+      const tScale = (state.titleSize || 100) / 100;
+      const photo0 = state.photos[0];
+
+      // Dispatch by theme + variant (32 unique design engines!)
+      const key = tpl.id;
+
+      // -----------------------------------------------------------------------
+      // TEMA 1: PREGADOR / CONVIDADO
+      // -----------------------------------------------------------------------
+      if (key === 'pregador-1') {
+        // Modelo Foto Recortada Grande
+        drawBaseBackground(ctx, W, H, c, 'radial');
+        drawLightBeams(ctx, W, H, c.accent, 3);
+        const pw = isLand ? W * 0.46 : W * 0.88;
+        const ph = isLand ? H * 0.84 : H * 0.56;
+        const px = isLand ? W * 0.5 : (W - pw) / 2;
+        const py = isLand ? H * 0.06 : H * 0.09;
+        drawPhotoFrame(ctx, photo0, px, py, pw, ph, c, { bottomFade: true, borderWidth: 0 });
+
+        const tx = isLand ? W * 0.07 : W * 0.5;
+        const align = isLand ? 'left' : 'center';
+        const maxTW = isLand ? W * 0.44 : W * 0.84;
+
+        ctx.textAlign = align;
+        if (state.tag) {
+          if (isLand) {
+            ctx.fillStyle = c.accent; ctx.font = `800 24px 'Montserrat', sans-serif`;
+            ctx.fillText(state.tag.toUpperCase(), tx, H * 0.22);
+          } else {
+            drawPill(ctx, state.tag, W / 2, H * 0.53, c.accent, isColorLight(c.accent) ? '#111' : '#fff', 22);
+          }
+        }
+        ctx.fillStyle = c.text;
+        const th = drawAutoTitle(ctx, state.title, tx, isLand ? H * 0.28 : H * 0.59, maxTW, 92 * tScale, `'Bebas Neue', sans-serif`, '700', align, 2);
+        ctx.fillStyle = c.accent;
+        ctx.font = `800 38px 'Montserrat', sans-serif`;
+        ctx.fillText((state.subtitle || '').toUpperCase(), tx, (isLand ? H * 0.28 : H * 0.59) + th + 16);
+
+        ctx.fillStyle = rgba(c.text, 0.82);
+        ctx.font = `500 26px 'Inter', sans-serif`;
+        drawWrappedText(ctx, state.info, tx, (isLand ? H * 0.28 : H * 0.59) + th + 76, maxTW, 34, 2);
+      }
+
+      else if (key === 'pregador-2') {
+        // Modelo Moldura Circular Dourada
+        drawBaseBackground(ctx, W, H, c, 'radial');
+        const cx = isLand ? W * 0.72 : W * 0.5;
+        const cy = isLand ? H * 0.46 : H * (isStory ? 0.34 : 0.35);
+        const r = isLand ? H * 0.31 : W * 0.24;
+
+        drawSunburst(ctx, cx, cy, r * 2.2, 24, rgba(c.accent, 0.07));
+        // Double outer ring
+        ctx.strokeStyle = rgba(c.accent, 0.4);
+        ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.arc(cx, cy, r + 22, 0, Math.PI * 2); ctx.stroke();
+
+        drawPhotoFrame(ctx, photo0, cx - r, cy - r, r * 2, r * 2, c, { forceShape: 'circle', borderWidth: 8 });
+
+        const tx = isLand ? W * 0.08 : W * 0.5;
+        const align = isLand ? 'left' : 'center';
+        const maxTW = isLand ? W * 0.44 : W * 0.84;
+
+        ctx.textAlign = align;
+        if (!isLand) drawPill(ctx, state.tag, W / 2, H * 0.08, rgba(c.accent, 0.18), c.accent, 22);
+        else {
+          ctx.fillStyle = c.accent; ctx.font = `700 24px 'Montserrat', sans-serif`;
+          ctx.fillText(state.tag.toUpperCase(), tx, H * 0.2);
+        }
+
+        const startY = isLand ? H * 0.26 : cy + r + 52;
+        ctx.fillStyle = c.text;
+        const th = drawAutoTitle(ctx, state.title, tx, startY, maxTW, 72 * tScale, `'Cinzel', serif`, '700', align, 2);
+
+        ctx.fillStyle = c.accent;
+        ctx.font = `700 36px 'Montserrat', sans-serif`;
+        ctx.fillText((state.subtitle || '').toUpperCase(), tx, startY + th + 18);
+
+        ctx.fillStyle = rgba(c.text, 0.82);
+        ctx.font = `500 25px 'Inter', sans-serif`;
+        drawWrappedText(ctx, state.info, tx, startY + th + 74, maxTW, 34, 2);
+      }
+
+      else if (key === 'pregador-3') {
+        // Modelo Estilo Revista / Moderno
+        drawBaseBackground(ctx, W, H, c, 'linear');
+        // Big editorial watermark text
+        ctx.save();
+        ctx.fillStyle = rgba(c.text, 0.045);
+        ctx.font = `900 ${isLand ? 220 : 185}px 'Montserrat', sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.fillText('PALAVRA', W * 0.5, H * 0.22);
+        ctx.restore();
+
+        const pw = isLand ? W * 0.36 : W * 0.56;
+        const ph = isLand ? H * 0.66 : H * 0.42;
+        const px = isLand ? W * 0.56 : W * 0.36;
+        const py = isLand ? H * 0.13 : H * 0.14;
+
+        // Offset geometric accent card behind photo
+        ctx.fillStyle = c.accent;
+        ctx.fillRect(px + 22, py + 22, pw, ph);
+        drawPhotoFrame(ctx, photo0, px, py, pw, ph, c, { borderWidth: 0 });
+
+        // Left editorial strip
+        ctx.fillStyle = c.accent;
+        ctx.fillRect(W * 0.07, isLand ? H * 0.22 : H * 0.16, 10, isLand ? H * 0.45 : H * 0.35);
+
+        const tx = W * 0.1;
+        const maxTW = isLand ? W * 0.42 : W * 0.82;
+        ctx.textAlign = 'left';
+        ctx.fillStyle = c.accent;
+        ctx.font = `700 24px 'Montserrat', sans-serif`;
+        ctx.fillText((state.tag || '').toUpperCase(), tx, isLand ? H * 0.22 : H * 0.6);
+
+        ctx.fillStyle = c.text;
+        const ty = isLand ? H * 0.27 : H * 0.64;
+        const th = drawAutoTitle(ctx, state.title, tx, ty, maxTW, 76 * tScale, `'Playfair Display', serif`, '800', 'left', 2);
+
+        ctx.fillStyle = c.accent;
+        ctx.font = `800 34px 'Montserrat', sans-serif`;
+        ctx.fillText((state.subtitle || '').toUpperCase(), tx, ty + th + 16);
+
+        ctx.fillStyle = rgba(c.text, 0.8);
+        ctx.font = `500 24px 'Inter', sans-serif`;
+        drawWrappedText(ctx, state.info, tx, ty + th + 68, maxTW, 32, 2);
+      }
+
+      else if (key === 'pregador-4') {
+        // Modelo Minimalista Clean
+        drawBaseBackground(ctx, W, H, c, 'linear');
+        drawDotGrid(ctx, W * 0.08, H * 0.1, 6, 6, 26, 3, rgba(c.accent, 0.35));
+
+        // Architectural thin outer frame
+        ctx.strokeStyle = rgba(c.text, 0.15);
+        ctx.lineWidth = 2;
+        ctx.strokeRect(W * 0.045, H * 0.04, W * 0.91, H * 0.92);
+
+        const pSize = isLand ? H * 0.56 : W * 0.46;
+        const px = isLand ? W * 0.58 : (W - pSize) / 2;
+        const py = isLand ? (H - pSize) * 0.45 : H * 0.16;
+        drawPhotoFrame(ctx, photo0, px, py, pSize, pSize, c, { borderWidth: 4 });
+
+        const tx = isLand ? W * 0.09 : W * 0.5;
+        const align = isLand ? 'left' : 'center';
+        const maxTW = isLand ? W * 0.43 : W * 0.8;
+
+        ctx.textAlign = align;
+        ctx.fillStyle = c.accent;
+        ctx.font = `700 22px 'Poppins', sans-serif`;
+        const tagY = isLand ? H * 0.22 : py + pSize + 44;
+        ctx.fillText((state.tag || '').toUpperCase(), tx, tagY);
+
+        ctx.fillStyle = c.text;
+        const th = drawAutoTitle(ctx, state.title, tx, tagY + 42, maxTW, 68 * tScale, `'Poppins', sans-serif`, '700', align, 2);
+
+        ctx.fillStyle = c.accent;
+        ctx.font = `700 32px 'Poppins', sans-serif`;
+        ctx.fillText((state.subtitle || '').toUpperCase(), tx, tagY + 42 + th + 14);
+
+        ctx.fillStyle = rgba(c.text, 0.72);
+        ctx.font = `500 24px 'Inter', sans-serif`;
+        drawWrappedText(ctx, state.info, tx, tagY + 42 + th + 66, maxTW, 32, 2);
+      }
+
+      // -----------------------------------------------------------------------
+      // TEMA 2: CULTO DA FAMÍLIA / DOMINGO
+      // -----------------------------------------------------------------------
+      else if (key === 'familia-1') {
+        // Modelo Acolhedor Quente
+        drawBaseBackground(ctx, W, H, c, 'radial');
+        // Warm organic waves
+        ctx.fillStyle = rgba(c.accent, 0.12);
+        ctx.beginPath();
+        ctx.arc(W * 0.15, H * 0.15, W * 0.35, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(W * 0.88, H * 0.75, W * 0.4, 0, Math.PI * 2);
+        ctx.fill();
+
+        const pw = isLand ? W * 0.38 : W * 0.68;
+        const ph = isLand ? H * 0.54 : H * 0.31;
+        const px = isLand ? W * 0.55 : (W - pw) / 2;
+        const py = isLand ? H * 0.18 : H * 0.14;
+        drawPhotoFrame(ctx, photo0, px, py, pw, ph, c, { forceShape: photo0.shape === 'none' ? 'rounded' : photo0.shape, borderWidth: 6 });
+
+        const tx = isLand ? W * 0.07 : W * 0.5;
+        const align = isLand ? 'left' : 'center';
+        const maxTW = isLand ? W * 0.44 : W * 0.84;
+
+        if (!isLand) drawPill(ctx, state.tag, W / 2, H * 0.065, rgba(c.accent, 0.2), c.accent, 22);
+        else {
+          ctx.textAlign = 'left'; ctx.fillStyle = c.accent;
+          ctx.font = `700 24px 'Poppins', sans-serif`;
+          ctx.fillText(state.tag.toUpperCase(), tx, H * 0.18);
+        }
+
+        const sy = isLand ? H * 0.24 : py + ph + 46;
+        ctx.fillStyle = c.text;
+        const th = drawAutoTitle(ctx, state.title, tx, sy, maxTW, 82 * tScale, `'Poppins', sans-serif`, '800', align, 2);
+
+        ctx.fillStyle = rgba(c.text, 0.9);
+        ctx.textAlign = align;
+        ctx.font = `500 30px 'Inter', sans-serif`;
+        const sh = drawWrappedText(ctx, state.subtitle, tx, sy + th + 14, maxTW, 38, 2);
+
+        // Info soft pill box
+        const infoY = sy + th + 24 + sh + 16;
+        roundRectPath(ctx, isLand ? tx : W * 0.12, infoY, isLand ? maxTW : W * 0.76, 84, 20);
+        ctx.fillStyle = rgba(c.accent, 0.18);
+        ctx.fill();
+        ctx.fillStyle = c.text;
+        ctx.textAlign = align;
+        ctx.font = `700 25px 'Montserrat', sans-serif`;
+        ctx.fillText(state.info, isLand ? tx + 24 : W * 0.5, infoY + 34);
+      }
+
+      else if (key === 'familia-2') {
+        // Modelo Urbano / Jovem
+        drawBaseBackground(ctx, W, H, c, 'linear');
+        // Diagonal dynamic stripes
+        ctx.save();
+        ctx.fillStyle = rgba(c.accent, 0.12);
+        for (let i = -3; i < 6; i++) {
+          ctx.beginPath();
+          ctx.moveTo(i * 220, 0);
+          ctx.lineTo(i * 220 + 90, 0);
+          ctx.lineTo(i * 220 - 260, H);
+          ctx.lineTo(i * 220 - 350, H);
+          ctx.closePath();
+          ctx.fill();
+        }
+        ctx.restore();
+
+        const pw = isLand ? W * 0.4 : W * 0.72;
+        const ph = isLand ? H * 0.62 : H * 0.34;
+        const px = isLand ? W * 0.54 : (W - pw) / 2;
+        const py = isLand ? H * 0.15 : H * 0.13;
+        drawPhotoFrame(ctx, photo0, px, py, pw, ph, c, { borderWidth: 8 });
+
+        const tx = isLand ? W * 0.07 : W * 0.5;
+        const align = isLand ? 'left' : 'center';
+        const maxTW = isLand ? W * 0.43 : W * 0.86;
+        const sy = isLand ? H * 0.22 : py + ph + 44;
+
+        ctx.save();
+        ctx.fillStyle = c.accent;
+        ctx.textAlign = align;
+        ctx.font = `800 26px 'Montserrat', sans-serif`;
+        ctx.fillText('// ' + (state.tag || '').toUpperCase(), tx, sy);
+        ctx.restore();
+
+        ctx.fillStyle = c.text;
+        const th = drawAutoTitle(ctx, state.title, tx, sy + 42, maxTW, 96 * tScale, `'Bebas Neue', sans-serif`, '700', align, 2);
+
+        ctx.fillStyle = rgba(c.text, 0.85);
+        ctx.textAlign = align;
+        ctx.font = `600 28px 'Inter', sans-serif`;
+        drawWrappedText(ctx, state.subtitle, tx, sy + 42 + th + 12, maxTW, 36, 2);
+
+        ctx.fillStyle = c.accent;
+        ctx.font = `800 26px 'Montserrat', sans-serif`;
+        ctx.fillText(state.info.toUpperCase(), tx, sy + 42 + th + 96);
+      }
+
+      else if (key === 'familia-3') {
+        // Modelo Clássico Elegante
+        drawBaseBackground(ctx, W, H, c, 'radial');
+        // Ornamental double frame
+        ctx.strokeStyle = c.accent;
+        ctx.lineWidth = 3;
+        ctx.strokeRect(W * 0.05, H * 0.04, W * 0.9, H * 0.92);
+        ctx.strokeStyle = rgba(c.accent, 0.4);
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(W * 0.065, H * 0.052, W * 0.87, H * 0.896);
+
+        const r = isLand ? H * 0.25 : W * 0.2;
+        const cx = isLand ? W * 0.72 : W * 0.5;
+        const cy = isLand ? H * 0.45 : H * 0.31;
+        drawPhotoFrame(ctx, photo0, cx - r, cy - r, r * 2, r * 2, c, { forceShape: 'circle', borderWidth: 6 });
+
+        const tx = isLand ? W * 0.1 : W * 0.5;
+        const align = isLand ? 'left' : 'center';
+        const maxTW = isLand ? W * 0.42 : W * 0.8;
+        const sy = isLand ? H * 0.22 : cy + r + 42;
+
+        ctx.textAlign = align;
+        ctx.fillStyle = c.accent;
+        ctx.font = `700 22px 'Cinzel', serif`;
+        ctx.fillText((state.tag || '').toUpperCase(), tx, sy);
+
+        ctx.fillStyle = c.text;
+        const th = drawAutoTitle(ctx, state.title, tx, sy + 38, maxTW, 70 * tScale, `'Cinzel', serif`, '700', align, 2);
+
+        ctx.fillStyle = rgba(c.text, 0.88);
+        ctx.font = `italic 600 28px 'Playfair Display', serif`;
+        const sh = drawWrappedText(ctx, state.subtitle, tx, sy + 38 + th + 18, maxTW, 36, 2);
+
+        ctx.fillStyle = c.accent;
+        ctx.font = `700 24px 'Montserrat', sans-serif`;
+        ctx.fillText(state.info, tx, sy + 38 + th + 30 + sh);
+      }
+
+      else if (key === 'familia-4') {
+        // Modelo Tipografia Gigante
+        drawBaseBackground(ctx, W, H, c, 'linear');
+        ctx.save();
+        ctx.fillStyle = rgba(c.accent, 0.12);
+        ctx.font = `900 ${isLand ? 320 : 280}px 'Bebas Neue', sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.fillText('DOMINGO', W * 0.5, H * 0.15);
+        ctx.fillText('FAMÍLIA', W * 0.5, H * 0.45);
+        ctx.restore();
+
+        drawDotGrid(ctx, W * 0.78, H * 0.1, 5, 8, 22, 3.5, rgba(c.accent, 0.4));
+
+        const tx = W * 0.5;
+        drawPill(ctx, state.tag, tx, H * 0.18, c.accent, isColorLight(c.accent) ? '#111' : '#fff', 24);
+        ctx.fillStyle = c.text;
+        const th = drawAutoTitle(ctx, state.title, tx, H * 0.28, W * 0.85, 138 * tScale, `'Bebas Neue', sans-serif`, '700', 'center', 2, 0.94);
+
+        // Accent bar
+        ctx.fillStyle = c.accent;
+        ctx.fillRect(W * 0.35, H * 0.28 + th + 20, W * 0.3, 8);
+
+        ctx.fillStyle = rgba(c.text, 0.9);
+        ctx.textAlign = 'center';
+        ctx.font = `700 32px 'Montserrat', sans-serif`;
+        drawWrappedText(ctx, state.subtitle, tx, H * 0.28 + th + 54, W * 0.8, 42, 2);
+
+        ctx.fillStyle = c.accent;
+        ctx.font = `800 30px 'Montserrat', sans-serif`;
+        ctx.fillText(state.info, tx, H * 0.74);
+      }
+
+      // -----------------------------------------------------------------------
+      // TEMA 3: ANIVERSARIANTES
+      // -----------------------------------------------------------------------
+      else if (key === 'aniversariantes-1') {
+        // Aniversariante Único
+        drawBaseBackground(ctx, W, H, c, 'radial');
+        drawConfetti(ctx, W, H, c.accent, c.text);
+
+        const r = isLand ? H * 0.28 : W * 0.23;
+        const cx = isLand ? W * 0.72 : W * 0.5;
+        const cy = isLand ? H * 0.45 : H * 0.32;
+        drawSunburst(ctx, cx, cy, r * 2, 20, rgba(c.accent, 0.1));
+        drawPhotoFrame(ctx, photo0, cx - r, cy - r, r * 2, r * 2, c, { forceShape: photo0.shape === 'none' ? 'circle' : photo0.shape, borderWidth: 8 });
+
+        const tx = isLand ? W * 0.08 : W * 0.5;
+        const align = isLand ? 'left' : 'center';
+        const maxTW = isLand ? W * 0.44 : W * 0.84;
+        const sy = isLand ? H * 0.22 : cy + r + 40;
+
+        if (!isLand) drawPill(ctx, state.tag, W / 2, H * 0.06, c.accent, isColorLight(c.accent) ? '#111' : '#fff', 22);
+        else { ctx.textAlign = 'left'; ctx.fillStyle = c.accent; ctx.font = `800 24px 'Montserrat', sans-serif`; ctx.fillText(state.tag.toUpperCase(), tx, H * 0.16); }
+
+        ctx.fillStyle = c.text;
+        const th = drawAutoTitle(ctx, state.title, tx, sy, maxTW, 98 * tScale, `'Montserrat', sans-serif`, '900', align, 2);
+
+        ctx.fillStyle = c.accent;
+        ctx.textAlign = align;
+        ctx.font = `800 42px 'Montserrat', sans-serif`;
+        ctx.fillText((state.subtitle || '').toUpperCase(), tx, sy + th + 14);
+
+        ctx.fillStyle = rgba(c.text, 0.85);
+        ctx.font = `500 26px 'Inter', sans-serif`;
+        drawWrappedText(ctx, state.info, tx, sy + th + 76, maxTW, 34, 3);
+      }
+
+      else if (key === 'aniversariantes-2') {
+        // Múltiplos Aniversariantes do Mês (4 Fotos)
+        drawBaseBackground(ctx, W, H, c, 'radial');
+        drawConfetti(ctx, W, H, c.accent, c.text);
+
+        drawPill(ctx, state.tag, W * 0.5, H * 0.05, rgba(c.accent, 0.2), c.accent, 21);
+        ctx.fillStyle = c.text;
+        const th = drawAutoTitle(ctx, state.title, W * 0.5, H * 0.11, W * 0.88, 66 * tScale, `'Montserrat', sans-serif`, '900', 'center', 2);
+
+        // 4-slot Grid
+        const gridY = H * 0.12 + th + 28;
+        if (isLand) {
+          // 4 columns in 16:9
+          const boxS = Math.min(W * 0.18, H * 0.42);
+          const gap = W * 0.04;
+          const totalW = boxS * 4 + gap * 3;
+          const startX = (W - totalW) / 2;
+          for (let i = 0; i < 4; i++) {
+            const slot = state.photos[i] || createEmptyPhotoSlot();
+            const sx = startX + i * (boxS + gap);
+            drawPhotoFrame(ctx, slot, sx, gridY, boxS, boxS, c, { borderWidth: 6 });
+            ctx.fillStyle = c.text;
+            ctx.textAlign = 'center';
+            ctx.font = `700 24px 'Montserrat', sans-serif`;
+            ctx.fillText(slot.name || `Aniversariante ${i + 1}`, sx + boxS / 2, gridY + boxS + 32);
+          }
+        } else {
+          // 2x2 grid in Portrait/Story
+          const boxS = Math.min(W * 0.31, H * 0.2);
+          const gapX = W * 0.1;
+          const gapY = isStory ? H * 0.07 : H * 0.065;
+          const startX = (W - (boxS * 2 + gapX)) / 2;
+          for (let i = 0; i < 4; i++) {
+            const col = i % 2;
+            const row = Math.floor(i / 2);
+            const slot = state.photos[i] || createEmptyPhotoSlot();
+            const sx = startX + col * (boxS + gapX);
+            const sy = gridY + row * (boxS + gapY);
+            drawPhotoFrame(ctx, slot, sx, sy, boxS, boxS, c, { borderWidth: 6 });
+            ctx.fillStyle = c.text;
+            ctx.textAlign = 'center';
+            ctx.font = `700 25px 'Montserrat', sans-serif`;
+            ctx.fillText(slot.name || `Aniversariante ${i + 1}`, sx + boxS / 2, sy + boxS + 30);
+          }
+        }
+
+        ctx.fillStyle = rgba(c.text, 0.85);
+        ctx.textAlign = 'center';
+        ctx.font = `600 24px 'Inter', sans-serif`;
+        ctx.fillText(state.info, W * 0.5, H - (isLand ? 120 : 145));
+      }
+
+      else if (key === 'aniversariantes-3') {
+        // Festivo Moderno
+        drawBaseBackground(ctx, W, H, c, 'linear');
+        drawConfetti(ctx, W, H, c.accent, c.text);
+
+        // Decorative capsule behind content
+        const pw = isLand ? W * 0.34 : W * 0.58;
+        const ph = isLand ? H * 0.58 : H * 0.36;
+        const px = isLand ? W * 0.58 : (W - pw) / 2;
+        const py = isLand ? H * 0.16 : H * 0.14;
+
+        roundRectPath(ctx, px - 18, py - 18, pw + 36, ph + 36, 42);
+        ctx.strokeStyle = c.accent;
+        ctx.lineWidth = 4;
+        ctx.stroke();
+
+        drawPhotoFrame(ctx, photo0, px, py, pw, ph, c, { borderWidth: 0 });
+
+        const tx = isLand ? W * 0.07 : W * 0.5;
+        const align = isLand ? 'left' : 'center';
+        const maxTW = isLand ? W * 0.45 : W * 0.84;
+        const sy = isLand ? H * 0.2 : py + ph + 46;
+
+        ctx.textAlign = align;
+        ctx.fillStyle = c.accent;
+        ctx.font = `800 24px 'Poppins', sans-serif`;
+        ctx.fillText((state.tag || '').toUpperCase(), tx, sy);
+
+        ctx.fillStyle = c.text;
+        const th = drawAutoTitle(ctx, state.title, tx, sy + 36, maxTW, 84 * tScale, `'Poppins', sans-serif`, '800', align, 2);
+
+        ctx.fillStyle = c.accent;
+        ctx.font = `800 38px 'Poppins', sans-serif`;
+        ctx.fillText((state.subtitle || '').toUpperCase(), tx, sy + 36 + th + 12);
+
+        ctx.fillStyle = rgba(c.text, 0.85);
+        ctx.font = `500 25px 'Inter', sans-serif`;
+        drawWrappedText(ctx, state.info, tx, sy + 36 + th + 70, maxTW, 34, 2);
+      }
+
+      else if (key === 'aniversariantes-4') {
+        // Elegante Pastel / Dourado
+        drawBaseBackground(ctx, W, H, c, 'radial');
+        // Soft concentric arcs
+        ctx.strokeStyle = rgba(c.accent, 0.25);
+        ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.arc(W * 0.5, H * 0.36, W * 0.42, 0, Math.PI * 2); ctx.stroke();
+        ctx.beginPath(); ctx.arc(W * 0.5, H * 0.36, W * 0.48, 0, Math.PI * 2); ctx.stroke();
+
+        const r = isLand ? H * 0.26 : W * 0.22;
+        const cx = isLand ? W * 0.72 : W * 0.5;
+        const cy = isLand ? H * 0.45 : H * 0.33;
+        drawPhotoFrame(ctx, photo0, cx - r, cy - r, r * 2, r * 2, c, { forceShape: 'circle', borderWidth: 6 });
+
+        const tx = isLand ? W * 0.08 : W * 0.5;
+        const align = isLand ? 'left' : 'center';
+        const maxTW = isLand ? W * 0.44 : W * 0.82;
+        const sy = isLand ? H * 0.22 : cy + r + 42;
+
+        ctx.textAlign = align;
+        ctx.fillStyle = c.accent;
+        ctx.font = `700 22px 'Cinzel', serif`;
+        ctx.fillText((state.tag || '').toUpperCase(), tx, sy);
+
+        ctx.fillStyle = c.text;
+        const th = drawAutoTitle(ctx, state.title, tx, sy + 36, maxTW, 76 * tScale, `'Playfair Display', serif`, '800', align, 2);
+
+        ctx.fillStyle = c.accent;
+        ctx.font = `700 36px 'Cinzel', serif`;
+        ctx.fillText((state.subtitle || '').toUpperCase(), tx, sy + 36 + th + 14);
+
+        ctx.fillStyle = rgba(c.text, 0.82);
+        ctx.font = `italic 600 25px 'Playfair Display', serif`;
+        drawWrappedText(ctx, state.info, tx, sy + 36 + th + 72, maxTW, 34, 2);
+      }
+
+      // -----------------------------------------------------------------------
+      // TEMA 4: TRANSMISSÃO AO VIVO / YOUTUBE
+      // -----------------------------------------------------------------------
+      else if (key === 'aovivo-1') {
+        // Capa Estilo Neon / Tech
+        drawBaseBackground(ctx, W, H, c, 'linear');
+        // Tech cyber grid lines
+        ctx.strokeStyle = rgba(c.accent, 0.14);
+        ctx.lineWidth = 1.5;
+        for (let gx = 0; gx < W; gx += 80) { ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, H); ctx.stroke(); }
+        for (let gy = 0; gy < H; gy += 80) { ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(W, gy); ctx.stroke(); }
+
+        // Glowing neon frame
+        ctx.save();
+        ctx.shadowColor = c.accent; ctx.shadowBlur = 24;
+        ctx.strokeStyle = c.accent; ctx.lineWidth = 4;
+        roundRectPath(ctx, W * 0.04, H * 0.05, W * 0.92, H * 0.9, 28);
+        ctx.stroke();
+        ctx.restore();
+
+        // LIVE pill
+        drawPill(ctx, '● ' + (state.tag || 'AO VIVO'), W * 0.5, H * 0.14, '#ef4444', '#ffffff', 26);
+
+        ctx.fillStyle = c.text;
+        const th = drawAutoTitle(ctx, state.title, W * 0.5, H * 0.28, W * 0.84, 118 * tScale, `'Montserrat', sans-serif`, '900', 'center', 2);
+
+        ctx.fillStyle = c.accent;
+        ctx.textAlign = 'center';
+        ctx.font = `700 36px 'Poppins', sans-serif`;
+        drawWrappedText(ctx, state.subtitle, W * 0.5, H * 0.28 + th + 24, W * 0.8, 44, 2);
+
+        ctx.fillStyle = rgba(c.text, 0.78);
+        ctx.font = `500 26px 'Inter', sans-serif`;
+        ctx.fillText(state.info, W * 0.5, H * 0.75);
+      }
+
+      else if (key === 'aovivo-2') {
+        // Capa Clássica com Foto do Pastor
+        drawBaseBackground(ctx, W, H, c, 'radial');
+        const pw = isLand ? W * 0.45 : W * 0.82;
+        const ph = isLand ? H * 0.82 : H * 0.44;
+        const px = isLand ? W * 0.51 : (W - pw) / 2;
+        const py = isLand ? H * 0.06 : H * 0.09;
+        drawPhotoFrame(ctx, photo0, px, py, pw, ph, c, { bottomFade: true, borderWidth: 0 });
+
+        const tx = isLand ? W * 0.07 : W * 0.5;
+        const align = isLand ? 'left' : 'center';
+        const maxTW = isLand ? W * 0.46 : W * 0.84;
+        const sy = isLand ? H * 0.22 : H * 0.56;
+
+        ctx.textAlign = align;
+        ctx.fillStyle = c.accent;
+        ctx.font = `800 24px 'Montserrat', sans-serif`;
+        ctx.fillText((state.tag || '').toUpperCase(), tx, sy);
+
+        ctx.fillStyle = c.text;
+        const th = drawAutoTitle(ctx, state.title, tx, sy + 42, maxTW, 92 * tScale, `'Montserrat', sans-serif`, '900', align, 3);
+
+        ctx.fillStyle = c.accent;
+        ctx.font = `800 36px 'Montserrat', sans-serif`;
+        ctx.fillText((state.subtitle || '').toUpperCase(), tx, sy + 42 + th + 16);
+
+        ctx.fillStyle = rgba(c.text, 0.8);
+        ctx.font = `500 25px 'Inter', sans-serif`;
+        drawWrappedText(ctx, state.info, tx, sy + 42 + th + 70, maxTW, 32, 2);
+      }
+
+      else if (key === 'aovivo-3') {
+        // Capa Minimalista "Estamos Ao Vivo"
+        drawBaseBackground(ctx, W, H, c, 'radial');
+        // Signal broadcast waves behind badge
+        const cx = W * 0.5;
+        const cy = H * 0.28;
+        [95, 140, 185].forEach((rad, i) => {
+          ctx.strokeStyle = rgba('#ef4444', 0.35 - i * 0.09);
+          ctx.lineWidth = 4;
+          ctx.beginPath(); ctx.arc(cx, cy, rad, 0, Math.PI * 2); ctx.stroke();
+        });
+        drawPill(ctx, '● LIVE • ' + (state.tag || 'AO VIVO'), cx, cy - 28, '#ef4444', '#ffffff', 26, 36, 16);
+
+        ctx.fillStyle = c.text;
+        const th = drawAutoTitle(ctx, state.title, cx, H * 0.44, W * 0.84, 110 * tScale, `'Poppins', sans-serif`, '800', 'center', 2);
+
+        ctx.fillStyle = rgba(c.text, 0.86);
+        ctx.textAlign = 'center';
+        ctx.font = `500 32px 'Inter', sans-serif`;
+        drawWrappedText(ctx, state.subtitle, cx, H * 0.44 + th + 20, W * 0.78, 42, 2);
+
+        ctx.fillStyle = c.accent;
+        ctx.font = `700 25px 'Montserrat', sans-serif`;
+        ctx.fillText(state.info, cx, H * 0.77);
+      }
+
+      else if (key === 'aovivo-4') {
+        // Capa Especial para Conferências
+        drawBaseBackground(ctx, W, H, c, 'linear');
+        drawLightBeams(ctx, W, H, c.accent, 5);
+
+        // Center diamond emblem behind title
+        ctx.save();
+        ctx.translate(W * 0.5, H * 0.45);
+        ctx.rotate(Math.PI / 4);
+        ctx.strokeStyle = rgba(c.accent, 0.3);
+        ctx.lineWidth = 4;
+        const ds = Math.min(W, H) * 0.34;
+        ctx.strokeRect(-ds / 2, -ds / 2, ds, ds);
+        ctx.restore();
+
+        drawPill(ctx, state.tag, W * 0.5, H * 0.16, rgba(c.accent, 0.22), c.accent, 24);
+        ctx.fillStyle = c.text;
+        const th = drawAutoTitle(ctx, state.title, W * 0.5, H * 0.28, W * 0.86, 128 * tScale, `'Bebas Neue', sans-serif`, '700', 'center', 2);
+
+        ctx.fillStyle = c.accent;
+        ctx.textAlign = 'center';
+        ctx.font = `800 34px 'Montserrat', sans-serif`;
+        ctx.fillText((state.subtitle || '').toUpperCase(), W * 0.5, H * 0.28 + th + 22);
+
+        ctx.fillStyle = rgba(c.text, 0.85);
+        ctx.font = `600 26px 'Inter', sans-serif`;
+        ctx.fillText(state.info, W * 0.5, H * 0.75);
+      }
+
+      // -----------------------------------------------------------------------
+      // TEMA 5: JOVENS / VIGÍLIA / CONFERÊNCIA
+      // -----------------------------------------------------------------------
+      else if (key === 'jovens-1') {
+        // Estilo Street / Grunge
+        drawBaseBackground(ctx, W, H, c, 'linear');
+        // Caution industrial diagonal bar
+        ctx.save();
+        ctx.translate(W * 0.5, H * 0.14);
+        ctx.rotate(-0.04);
+        ctx.fillStyle = c.accent;
+        ctx.fillRect(-W * 0.6, -24, W * 1.2, 48);
+        ctx.fillStyle = '#09090b';
+        ctx.font = `900 26px 'Montserrat', sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(`${state.tag}  ///  ${state.tag}  ///  ${state.tag}`.toUpperCase(), 0, 2);
+        ctx.restore();
+
+        const pw = isLand ? W * 0.36 : W * 0.64;
+        const ph = isLand ? H * 0.54 : H * 0.33;
+        const px = isLand ? W * 0.56 : (W - pw) / 2;
+        const py = isLand ? H * 0.22 : H * 0.21;
+        drawPhotoFrame(ctx, photo0, px, py, pw, ph, c, { borderWidth: 6 });
+
+        const tx = isLand ? W * 0.07 : W * 0.5;
+        const align = isLand ? 'left' : 'center';
+        const maxTW = isLand ? W * 0.44 : W * 0.86;
+        const sy = isLand ? H * 0.26 : py + ph + 38;
+
+        ctx.fillStyle = c.text;
+        const th = drawAutoTitle(ctx, state.title, tx, sy, maxTW, 112 * tScale, `'Bebas Neue', sans-serif`, '700', align, 2);
+
+        ctx.fillStyle = c.accent;
+        ctx.textAlign = align;
+        ctx.font = `800 32px 'Montserrat', sans-serif`;
+        drawWrappedText(ctx, state.subtitle.toUpperCase(), tx, sy + th + 10, maxTW, 40, 2);
+
+        ctx.fillStyle = rgba(c.text, 0.85);
+        ctx.font = `700 25px 'Inter', sans-serif`;
+        ctx.fillText(state.info, tx, sy + th + 96);
+      }
+
+      else if (key === 'jovens-2') {
+        // Estilo Neon Cyberpunk
+        drawBaseBackground(ctx, W, H, c, 'radial');
+        // Synthwave laser beams
+        ctx.save();
+        ctx.strokeStyle = rgba(c.accent, 0.35);
+        ctx.lineWidth = 3;
+        for (let i = 0; i < 6; i++) {
+          ctx.beginPath();
+          ctx.moveTo(0, H * (0.1 + i * 0.16));
+          ctx.lineTo(W, H * (0.25 + i * 0.1));
+          ctx.stroke();
+        }
+        ctx.restore();
+
+        drawPill(ctx, state.tag, W * 0.5, H * 0.12, rgba(c.accent, 0.2), c.accent, 23);
+
+        // Glitch offset title
+        ctx.save();
+        ctx.fillStyle = rgba('#06b6d4', 0.65);
+        drawAutoTitle(ctx, state.title, W * 0.5 + 6, H * 0.25 + 4, W * 0.86, 118 * tScale, `'Oswald', sans-serif`, '700', 'center', 2);
+        ctx.fillStyle = c.text;
+        const th = drawAutoTitle(ctx, state.title, W * 0.5, H * 0.25, W * 0.86, 118 * tScale, `'Oswald', sans-serif`, '700', 'center', 2);
+        ctx.restore();
+
+        ctx.fillStyle = c.accent;
+        ctx.textAlign = 'center';
+        ctx.font = `700 34px 'Poppins', sans-serif`;
+        drawWrappedText(ctx, state.subtitle, W * 0.5, H * 0.25 + th + 28, W * 0.82, 42, 2);
+
+        roundRectPath(ctx, W * 0.14, H * 0.68, W * 0.72, 76, 16);
+        ctx.strokeStyle = c.accent;
+        ctx.lineWidth = 3;
+        ctx.stroke();
+        ctx.fillStyle = c.text;
+        ctx.font = `700 26px 'Montserrat', sans-serif`;
+        ctx.fillText(state.info, W * 0.5, H * 0.68 + 30);
+      }
+
+      else if (key === 'jovens-3') {
+        // Estilo Tipografia Brutalista
+        drawBaseBackground(ctx, W, H, c, 'linear');
+        // Heavy brutalist grid boxes
+        ctx.strokeStyle = c.text;
+        ctx.lineWidth = 6;
+        ctx.strokeRect(W * 0.06, H * 0.06, W * 0.88, H * 0.82);
+
+        ctx.fillStyle = c.accent;
+        ctx.fillRect(W * 0.06, H * 0.06, W * 0.88, 86);
+        ctx.fillStyle = '#09090b';
+        ctx.textAlign = 'center';
+        ctx.font = `900 32px 'Oswald', sans-serif`;
+        ctx.fillText((state.tag || '').toUpperCase(), W * 0.5, H * 0.06 + 30);
+
+        ctx.fillStyle = c.text;
+        const th = drawAutoTitle(ctx, state.title, W * 0.5, H * 0.24, W * 0.8, 155 * tScale, `'Bebas Neue', sans-serif`, '700', 'center', 2, 0.9);
+
+        ctx.fillStyle = c.text;
+        ctx.fillRect(W * 0.06, H * 0.62, W * 0.88, 6);
+
+        ctx.fillStyle = c.accent;
+        ctx.textAlign = 'center';
+        ctx.font = `700 34px 'Oswald', sans-serif`;
+        ctx.fillText((state.subtitle || '').toUpperCase(), W * 0.5, H * 0.67);
+
+        ctx.fillStyle = rgba(c.text, 0.88);
+        ctx.font = `600 26px 'Inter', sans-serif`;
+        ctx.fillText(state.info, W * 0.5, H * 0.75);
+      }
+
+      else if (key === 'jovens-4') {
+        // Estilo Fogo / Avivamento
+        drawBaseBackground(ctx, W, H, c, 'radial');
+        drawEmbers(ctx, W, H, c.accent);
+        drawLightBeams(ctx, W, H, c.accent, 3);
+
+        drawPill(ctx, state.tag, W * 0.5, H * 0.14, rgba(c.accent, 0.25), c.accent, 23);
+
+        ctx.fillStyle = c.text;
+        const th = drawAutoTitle(ctx, state.title, W * 0.5, H * 0.26, W * 0.86, 126 * tScale, `'Bebas Neue', sans-serif`, '700', 'center', 2);
+
+        ctx.fillStyle = rgba(c.text, 0.9);
+        ctx.textAlign = 'center';
+        ctx.font = `italic 600 32px 'Playfair Display', serif`;
+        drawWrappedText(ctx, state.subtitle, W * 0.5, H * 0.26 + th + 24, W * 0.8, 42, 2);
+
+        ctx.fillStyle = c.accent;
+        ctx.font = `800 30px 'Montserrat', sans-serif`;
+        ctx.fillText(state.info.toUpperCase(), W * 0.5, H * 0.74);
+      }
+
+      // -----------------------------------------------------------------------
+      // TEMA 6: SANTA CEIA DO SENHOR
+      // -----------------------------------------------------------------------
+      else if (key === 'ceia-1') {
+        // Solene Vinho & Ouro
+        drawBaseBackground(ctx, W, H, c, 'radial');
+        drawChaliceIcon(ctx, W * 0.5, H * 0.23, isLand ? 140 : 170, c.accent);
+
+        ctx.textAlign = 'center';
+        ctx.fillStyle = c.accent;
+        ctx.font = `700 24px 'Cinzel', serif`;
+        ctx.fillText((state.tag || '').toUpperCase(), W * 0.5, H * 0.37);
+
+        ctx.fillStyle = c.text;
+        const th = drawAutoTitle(ctx, state.title, W * 0.5, H * 0.43, W * 0.84, 96 * tScale, `'Cinzel', serif`, '700', 'center', 2);
+
+        ctx.fillStyle = rgba(c.text, 0.9);
+        ctx.font = `italic 600 32px 'Playfair Display', serif`;
+        drawWrappedText(ctx, `"${state.subtitle}"`, W * 0.5, H * 0.43 + th + 20, W * 0.78, 42, 2);
+
+        ctx.fillStyle = c.accent;
+        ctx.font = `700 25px 'Montserrat', sans-serif`;
+        ctx.fillText(state.info, W * 0.5, H * 0.76);
+      }
+
+      else if (key === 'ceia-2') {
+        // Minimalista Branco & Dourado
+        drawBaseBackground(ctx, W, H, c, 'linear');
+        ctx.strokeStyle = rgba(c.accent, 0.35);
+        ctx.lineWidth = 2;
+        ctx.strokeRect(W * 0.06, H * 0.05, W * 0.88, H * 0.9);
+
+        drawCrossIcon(ctx, W * 0.5, H * 0.22, 130, c.accent, true);
+
+        ctx.textAlign = 'center';
+        ctx.fillStyle = c.accent;
+        ctx.font = `700 22px 'Montserrat', sans-serif`;
+        ctx.fillText((state.tag || '').toUpperCase(), W * 0.5, H * 0.36);
+
+        ctx.fillStyle = c.text;
+        const th = drawAutoTitle(ctx, state.title, W * 0.5, H * 0.42, W * 0.8, 86 * tScale, `'Cinzel', serif`, '700', 'center', 2);
+
+        ctx.fillStyle = rgba(c.text, 0.8);
+        ctx.font = `500 28px 'Inter', sans-serif`;
+        drawWrappedText(ctx, state.subtitle, W * 0.5, H * 0.42 + th + 20, W * 0.76, 38, 2);
+
+        ctx.fillStyle = c.accent;
+        ctx.font = `700 25px 'Montserrat', sans-serif`;
+        ctx.fillText(state.info, W * 0.5, H * 0.75);
+      }
+
+      else if (key === 'ceia-3') {
+        // Estilo Moderno Escuro
+        drawBaseBackground(ctx, W, H, c, 'radial');
+        drawLightBeams(ctx, W, H, c.accent, 2);
+        drawCrossIcon(ctx, W * 0.5, H * 0.26, 160, rgba(c.accent, 0.25), false);
+
+        drawPill(ctx, state.tag, W * 0.5, H * 0.36, rgba(c.accent, 0.2), c.accent, 22);
+
+        ctx.fillStyle = c.text;
+        const th = drawAutoTitle(ctx, state.title, W * 0.5, H * 0.44, W * 0.84, 108 * tScale, `'Montserrat', sans-serif`, '900', 'center', 2);
+
+        ctx.fillStyle = rgba(c.text, 0.86);
+        ctx.textAlign = 'center';
+        ctx.font = `500 30px 'Inter', sans-serif`;
+        drawWrappedText(ctx, state.subtitle, W * 0.5, H * 0.44 + th + 20, W * 0.78, 38, 2);
+
+        ctx.fillStyle = c.accent;
+        ctx.font = `800 28px 'Montserrat', sans-serif`;
+        ctx.fillText(state.info, W * 0.5, H * 0.76);
+      }
+
+      else if (key === 'ceia-4') {
+        // Clássico com Versículo
+        drawBaseBackground(ctx, W, H, c, 'radial');
+        drawChaliceIcon(ctx, W * 0.5, H * 0.16, 105, c.accent);
+
+        ctx.textAlign = 'center';
+        ctx.fillStyle = c.accent;
+        ctx.font = `700 22px 'Montserrat', sans-serif`;
+        ctx.fillText((state.tag || '').toUpperCase(), W * 0.5, H * 0.26);
+
+        ctx.fillStyle = c.text;
+        const th = drawAutoTitle(ctx, state.title, W * 0.5, H * 0.31, W * 0.85, 78 * tScale, `'Playfair Display', serif`, '800', 'center', 2);
+
+        // Scripture card
+        const cardY = H * 0.31 + th + 32;
+        const cardH = isLand ? 200 : 250;
+        roundRectPath(ctx, W * 0.1, cardY, W * 0.8, cardH, 24);
+        ctx.fillStyle = rgba(c.accent, 0.12);
+        ctx.fill();
+        ctx.strokeStyle = rgba(c.accent, 0.45);
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.fillStyle = c.text;
+        ctx.font = `italic 600 29px 'Playfair Display', serif`;
+        const sh = drawWrappedText(ctx, state.subtitle, W * 0.5, cardY + 42, W * 0.7, 38, 3);
+        ctx.fillStyle = rgba(c.text, 0.85);
+        ctx.font = `500 25px 'Inter', sans-serif`;
+        drawWrappedText(ctx, state.info, W * 0.5, cardY + 56 + sh, W * 0.7, 34, 3);
+      }
+
+      // -----------------------------------------------------------------------
+      // TEMA 7: AVISOS E COMUNICADOS
+      // -----------------------------------------------------------------------
+      else if (key === 'avisos-1') {
+        // Aviso Urgente / Importante
+        drawBaseBackground(ctx, W, H, c, 'linear');
+        drawAlertIcon(ctx, W * 0.5, H * 0.19, 130, c.accent);
+
+        drawPill(ctx, state.tag, W * 0.5, H * 0.29, c.accent, isColorLight(c.accent) ? '#111' : '#fff', 24);
+
+        ctx.fillStyle = c.text;
+        const th = drawAutoTitle(ctx, state.title, W * 0.5, H * 0.38, W * 0.86, 94 * tScale, `'Montserrat', sans-serif`, '900', 'center', 2);
+
+        ctx.fillStyle = c.accent;
+        ctx.textAlign = 'center';
+        ctx.font = `700 30px 'Inter', sans-serif`;
+        ctx.fillText(state.subtitle, W * 0.5, H * 0.38 + th + 20);
+
+        // Structured Message Box
+        const boxY = H * 0.38 + th + 76;
+        roundRectPath(ctx, W * 0.09, boxY, W * 0.82, H * 0.23, 24);
+        ctx.fillStyle = rgba(c.text, 0.07);
+        ctx.fill();
+        ctx.strokeStyle = rgba(c.accent, 0.4);
+        ctx.lineWidth = 2.5;
+        ctx.stroke();
+
+        ctx.fillStyle = c.text;
+        ctx.font = `500 28px 'Inter', sans-serif`;
+        drawWrappedText(ctx, state.info, W * 0.5, boxY + 48, W * 0.74, 38, 4);
+      }
+
+      else if (key === 'avisos-2') {
+        // Programação da Semana (Linhas dinâmicas!)
+        drawBaseBackground(ctx, W, H, c, 'radial');
+        drawDotGrid(ctx, W * 0.06, H * 0.07, 4, 4, 20, 3, rgba(c.accent, 0.35));
+
+        drawPill(ctx, state.tag, W * 0.5, H * 0.07, rgba(c.accent, 0.2), c.accent, 21);
+
+        ctx.fillStyle = c.text;
+        const th = drawAutoTitle(ctx, state.title, W * 0.5, H * 0.135, W * 0.86, 72 * tScale, `'Montserrat', sans-serif`, '900', 'center', 2);
+
+        ctx.fillStyle = rgba(c.text, 0.8);
+        ctx.textAlign = 'center';
+        ctx.font = `500 25px 'Inter', sans-serif`;
+        ctx.fillText(state.subtitle, W * 0.5, H * 0.135 + th + 12);
+
+        // Parse lines into sleek schedule cards
+        const lines = (state.info || '').split('\n').filter(Boolean).slice(0, 6);
+        let rowY = H * 0.135 + th + 62;
+        const rowH = isLand ? 72 : 96;
+        const gap = isLand ? 14 : 18;
+        lines.forEach(line => {
+          roundRectPath(ctx, W * 0.08, rowY, W * 0.84, rowH, 16);
+          ctx.fillStyle = rgba(c.text, 0.06);
+          ctx.fill();
+          ctx.fillStyle = c.accent;
+          ctx.fillRect(W * 0.08, rowY, 10, rowH);
+
+          ctx.fillStyle = c.text;
+          ctx.textAlign = 'left';
+          ctx.textBaseline = 'middle';
+          ctx.font = `700 ${isLand ? 24 : 27}px 'Montserrat', sans-serif`;
+          ctx.fillText(line, W * 0.115, rowY + rowH / 2);
+          rowY += rowH + gap;
+        });
+      }
+
+      else if (key === 'avisos-3') {
+        // Mudança de Horário / Local
+        drawBaseBackground(ctx, W, H, c, 'linear');
+        // Stylized vector clock
+        ctx.save();
+        const cx = W * 0.5, cy = H * 0.18, r = 56;
+        ctx.strokeStyle = c.accent; ctx.lineWidth = 6;
+        ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx, cy - r * 0.6); ctx.moveTo(cx, cy); ctx.lineTo(cx + r * 0.5, cy); ctx.stroke();
+        ctx.restore();
+
+        drawPill(ctx, state.tag, W * 0.5, H * 0.27, rgba(c.accent, 0.2), c.accent, 22);
+
+        ctx.fillStyle = c.text;
+        const th = drawAutoTitle(ctx, state.title, W * 0.5, H * 0.35, W * 0.86, 98 * tScale, `'Bebas Neue', sans-serif`, '700', 'center', 2);
+
+        ctx.fillStyle = rgba(c.text, 0.85);
+        ctx.textAlign = 'center';
+        ctx.font = `600 28px 'Inter', sans-serif`;
+        drawWrappedText(ctx, state.subtitle, W * 0.5, H * 0.35 + th + 16, W * 0.8, 36, 2);
+
+        roundRectPath(ctx, W * 0.1, H * 0.58, W * 0.8, 175, 22);
+        ctx.fillStyle = c.accent;
+        ctx.fill();
+        ctx.fillStyle = isColorLight(c.accent) ? '#09090b' : '#ffffff';
+        ctx.font = `800 32px 'Montserrat', sans-serif`;
+        drawWrappedText(ctx, state.info, W * 0.5, H * 0.58 + 52, W * 0.72, 44, 3);
+      }
+
+      else if (key === 'avisos-4') {
+        // Aviso de Oração / Jejum
+        drawBaseBackground(ctx, W, H, c, 'radial');
+        drawSunburst(ctx, W * 0.5, H * 0.22, W * 0.55, 28, rgba(c.accent, 0.06));
+        drawCrossIcon(ctx, W * 0.5, H * 0.2, 110, c.accent, true);
+
+        ctx.textAlign = 'center';
+        ctx.fillStyle = c.accent;
+        ctx.font = `700 24px 'Montserrat', sans-serif`;
+        ctx.fillText((state.tag || '').toUpperCase(), W * 0.5, H * 0.32);
+
+        ctx.fillStyle = c.text;
+        const th = drawAutoTitle(ctx, state.title, W * 0.5, H * 0.38, W * 0.85, 86 * tScale, `'Poppins', sans-serif`, '800', 'center', 2);
+
+        ctx.fillStyle = rgba(c.text, 0.88);
+        ctx.font = `italic 600 30px 'Playfair Display', serif`;
+        drawWrappedText(ctx, state.subtitle, W * 0.5, H * 0.38 + th + 20, W * 0.78, 40, 2);
+
+        ctx.fillStyle = c.accent;
+        ctx.font = `700 27px 'Inter', sans-serif`;
+        drawWrappedText(ctx, state.info, W * 0.5, H * 0.72, W * 0.8, 36, 3);
+      }
+
+      // -----------------------------------------------------------------------
+      // TEMA 8: CULTO DE ENSINO / EBD / ORAÇÃO
+      // -----------------------------------------------------------------------
+      else if (key === 'ensino-1') {
+        // Estudo Bíblico Moderno
+        drawBaseBackground(ctx, W, H, c, 'linear');
+        drawBibleIcon(ctx, W * 0.5, H * 0.2, 130, c.accent);
+
+        drawPill(ctx, state.tag, W * 0.5, H * 0.3, rgba(c.accent, 0.2), c.accent, 22);
+
+        ctx.fillStyle = c.text;
+        const th = drawAutoTitle(ctx, state.title, W * 0.5, H * 0.38, W * 0.84, 96 * tScale, `'Montserrat', sans-serif`, '900', 'center', 2);
+
+        ctx.fillStyle = rgba(c.text, 0.85);
+        ctx.textAlign = 'center';
+        ctx.font = `500 30px 'Inter', sans-serif`;
+        drawWrappedText(ctx, state.subtitle, W * 0.5, H * 0.38 + th + 20, W * 0.78, 38, 2);
+
+        ctx.fillStyle = c.accent;
+        ctx.font = `700 27px 'Montserrat', sans-serif`;
+        ctx.fillText(state.info, W * 0.5, H * 0.74);
+      }
+
+      else if (key === 'ensino-2') {
+        // Oração da Madrugada
+        drawBaseBackground(ctx, W, H, c, 'radial');
+        // Dawn horizon glow + stars
+        ctx.save();
+        for (let i = 0; i < 30; i++) {
+          const sx = ((i * 157 + 23) % 100) / 100 * W;
+          const sy = ((i * 97 + 13) % 45) / 100 * H;
+          ctx.fillStyle = rgba(c.text, 0.45);
+          ctx.beginPath(); ctx.arc(sx, sy, 2 + (i % 3), 0, Math.PI * 2); ctx.fill();
+        }
+        const horizon = ctx.createRadialGradient(W * 0.5, H * 0.88, 10, W * 0.5, H * 0.88, W * 0.7);
+        horizon.addColorStop(0, rgba(c.accent, 0.45));
+        horizon.addColorStop(1, rgba(c.accent, 0));
+        ctx.fillStyle = horizon;
+        ctx.fillRect(0, 0, W, H);
+        ctx.restore();
+
+        drawPill(ctx, state.tag, W * 0.5, H * 0.16, rgba(c.accent, 0.2), c.accent, 22);
+
+        ctx.fillStyle = c.text;
+        const th = drawAutoTitle(ctx, state.title, W * 0.5, H * 0.28, W * 0.84, 92 * tScale, `'Cinzel', serif`, '700', 'center', 2);
+
+        ctx.fillStyle = rgba(c.text, 0.9);
+        ctx.textAlign = 'center';
+        ctx.font = `italic 600 30px 'Playfair Display', serif`;
+        drawWrappedText(ctx, `"${state.subtitle}"`, W * 0.5, H * 0.28 + th + 24, W * 0.78, 40, 2);
+
+        ctx.fillStyle = c.accent;
+        ctx.font = `800 28px 'Montserrat', sans-serif`;
+        ctx.fillText(state.info, W * 0.5, H * 0.72);
+      }
+
+      else if (key === 'ensino-3') {
+        // Escola Bíblica Dominical
+        drawBaseBackground(ctx, W, H, c, 'linear');
+        drawDotGrid(ctx, W * 0.8, H * 0.08, 5, 5, 22, 3, rgba(c.accent, 0.3));
+        drawBibleIcon(ctx, W * 0.5, H * 0.18, 120, c.accent);
+
+        drawPill(ctx, state.tag, W * 0.5, H * 0.28, c.accent, isColorLight(c.accent) ? '#111' : '#fff', 22);
+
+        ctx.fillStyle = c.text;
+        const th = drawAutoTitle(ctx, state.title, W * 0.5, H * 0.36, W * 0.84, 84 * tScale, `'Poppins', sans-serif`, '800', 'center', 2);
+
+        roundRectPath(ctx, W * 0.12, H * 0.36 + th + 28, W * 0.76, 110, 18);
+        ctx.fillStyle = rgba(c.accent, 0.14);
+        ctx.fill();
+
+        ctx.fillStyle = c.text;
+        ctx.textAlign = 'center';
+        ctx.font = `600 28px 'Inter', sans-serif`;
+        ctx.fillText(state.subtitle, W * 0.5, H * 0.36 + th + 76);
+
+        ctx.fillStyle = c.accent;
+        ctx.font = `800 27px 'Montserrat', sans-serif`;
+        ctx.fillText(state.info, W * 0.5, H * 0.75);
+      }
+
+      else if (key === 'ensino-4') {
+        // Células / Pequenos Grupos
+        drawBaseBackground(ctx, W, H, c, 'radial');
+        // Connected network circles graphic
+        ctx.save();
+        const nodes = [
+          [W * 0.25, H * 0.2], [W * 0.5, H * 0.14], [W * 0.75, H * 0.2],
+          [W * 0.35, H * 0.3], [W * 0.65, H * 0.3]
+        ];
+        ctx.strokeStyle = rgba(c.accent, 0.4);
+        ctx.lineWidth = 3;
+        nodes.forEach((a, i) => {
+          nodes.forEach((b, j) => {
+            if (j > i) { ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.stroke(); }
+          });
+        });
+        nodes.forEach(([nx, ny]) => {
+          ctx.fillStyle = c.accent;
+          ctx.beginPath(); ctx.arc(nx, ny, 14, 0, Math.PI * 2); ctx.fill();
+        });
+        ctx.restore();
+
+        drawPill(ctx, state.tag, W * 0.5, H * 0.35, rgba(c.accent, 0.2), c.accent, 22);
+
+        ctx.fillStyle = c.text;
+        const th = drawAutoTitle(ctx, state.title, W * 0.5, H * 0.43, W * 0.85, 94 * tScale, `'Poppins', sans-serif`, '800', 'center', 2);
+
+        ctx.fillStyle = rgba(c.text, 0.88);
+        ctx.textAlign = 'center';
+        ctx.font = `500 29px 'Inter', sans-serif`;
+        drawWrappedText(ctx, state.subtitle, W * 0.5, H * 0.43 + th + 18, W * 0.78, 38, 2);
+
+        ctx.fillStyle = c.accent;
+        ctx.font = `700 26px 'Montserrat', sans-serif`;
+        drawWrappedText(ctx, state.info, W * 0.5, H * 0.73, W * 0.82, 34, 2);
+      }
+
+      // Subtle film grain texture + Shared Footer + Logo + Stickers
+      drawNoise(ctx, W, H);
+      drawFooter(ctx, W, H, state);
+      drawLogoAndStickers(ctx, W, H, state);
+    }
+
+    // =========================================================================
+    // 5. GALLERY UI & ASYNC THUMBNAIL GENERATION
+    // =========================================================================
+    function renderCategoryTabs() {
+      const container = document.getElementById('category-tabs');
+      container.innerHTML = CATEGORIES.map(cat => {
+        const active = cat.id === activeCategory;
+        return `
+          <button onclick="selectCategory('${cat.id}')"
+            class="shrink-0 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 transition-all border ${
+              active
+                ? 'bg-indigo-600 text-white border-indigo-400 shadow-lg shadow-indigo-500/25'
+                : 'bg-studio-900 text-zinc-300 border-white/10 hover:bg-studio-800 hover:text-white'
+            }">
+            <span>${cat.icon}</span>
+            <span>${cat.name}</span>
+          </button>
+        `;
+      }).join('');
+    }
+
+    function selectCategory(catId) {
+      activeCategory = catId;
+      renderCategoryTabs();
+      renderGalleryGrid();
+    }
+
+    function getPreviewStateForTemplate(tpl) {
+      const pal = PALETTES.find(p => p.id === tpl.paletteId) || PALETTES[0];
+      return {
+        format: tpl.defaultFormat || 'portrait',
+        tag: tpl.tag,
+        title: tpl.title,
+        titleSize: 100,
+        subtitle: tpl.subtitle,
+        info: tpl.info,
+        church: churchConfig.name,
+        address: churchConfig.address,
+        instagram: churchConfig.instagram,
+        colors: { bg: pal.bg, bg2: pal.bg2, accent: pal.accent, text: pal.text },
+        stickers: tpl.theme === 'aovivo' ? ['aovivo'] : [],
+        showLogo: true,
+        customLogoImg: null,
+        photos: [
+          { ...createEmptyPhotoSlot('Ana Beatriz'), shape: tpl.defaultShape || 'circle' },
+          { ...createEmptyPhotoSlot('Carlos Eduardo'), shape: tpl.defaultShape || 'circle' },
+          { ...createEmptyPhotoSlot('Juliana Souza'), shape: tpl.defaultShape || 'circle' },
+          { ...createEmptyPhotoSlot('Pedro Henrique'), shape: tpl.defaultShape || 'circle' }
+        ]
+      };
+    }
+
+    function renderGalleryGrid() {
+      const grid = document.getElementById('templates-grid');
+      const list = activeCategory === 'all' ? TEMPLATES : TEMPLATES.filter(t => t.theme === activeCategory);
+
+      grid.innerHTML = list.map(tpl => {
+        const cat = CATEGORIES.find(c => c.id === tpl.theme);
+        const isLand = tpl.defaultFormat === 'landscape';
+        return `
+          <div onclick="openTemplate('${tpl.id}')"
+            class="group cursor-pointer bg-studio-900 border border-white/10 hover:border-indigo-500/60 rounded-2xl overflow-hidden flex flex-col transition-all duration-200 hover:-translate-y-1 hover:shadow-2xl hover:shadow-indigo-500/15">
+            <div class="relative bg-studio-950 p-3 flex items-center justify-center ${isLand ? 'aspect-[4/3]' : 'aspect-[4/5]'} overflow-hidden">
+              <canvas id="thumb-${tpl.id}" class="max-w-full max-h-full rounded-lg shadow-lg object-contain transition-transform duration-300 group-hover:scale-[1.03]"></canvas>
+              <div class="absolute inset-0 bg-indigo-950/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px]">
+                <span class="px-4 py-2 rounded-xl bg-indigo-600 text-white text-xs font-bold shadow-lg flex items-center gap-1.5">
+                  <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                  Editar Esta Arte
+                </span>
+              </div>
+            </div>
+            <div class="p-3.5 border-t border-white/10 flex items-center justify-between gap-2 bg-studio-900">
+              <div class="min-w-0">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-indigo-400 block">${cat ? cat.name : tpl.theme}</span>
+                <h3 class="text-sm font-semibold text-white truncate">${tpl.name}</h3>
+              </div>
+              <span class="shrink-0 text-[10px] px-2 py-0.5 rounded bg-studio-800 text-zinc-400 border border-white/10">V${tpl.variant}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      renderGalleryThumbnails();
+    }
+
+    let thumbRenderQueue = 0;
+    function renderGalleryThumbnails() {
+      const myRun = ++thumbRenderQueue;
+      const list = activeCategory === 'all' ? TEMPLATES : TEMPLATES.filter(t => t.theme === activeCategory);
+      let idx = 0;
+
+      // Offscreen full-res canvas scaled down cleanly to thumbnail canvas
+      const offscreen = document.createElement('canvas');
+
+      function step() {
+        if (myRun !== thumbRenderQueue) return;
+        const batchEnd = Math.min(idx + 3, list.length);
+        for (; idx < batchEnd; idx++) {
+          const tpl = list[idx];
+          const thumbEl = document.getElementById(`thumb-${tpl.id}`);
+          if (!thumbEl) continue;
+          const previewState = getPreviewStateForTemplate(tpl);
+          renderArtToCanvas(offscreen, tpl, previewState);
+
+          const scale = 0.34;
+          thumbEl.width = Math.round(offscreen.width * scale);
+          thumbEl.height = Math.round(offscreen.height * scale);
+          const tctx = thumbEl.getContext('2d');
+          tctx.drawImage(offscreen, 0, 0, thumbEl.width, thumbEl.height);
+        }
+        if (idx < list.length) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+
+    // =========================================================================
+    // 6. STUDIO EDITOR LOGIC & INTERACTIONS
+    // =========================================================================
+    const studioCanvas = document.getElementById('studio-canvas');
+
+    function openTemplate(tplId, preserveUserTexts = false) {
+      const tpl = TEMPLATES.find(t => t.id === tplId);
+      if (!tpl) return;
+      currentTemplate = tpl;
+
+      const pal = PALETTES.find(p => p.id === tpl.paletteId) || PALETTES[0];
+
+      if (!preserveUserTexts) {
+        editorState.format = tpl.defaultFormat || 'portrait';
+        editorState.tag = tpl.tag;
+        editorState.title = tpl.title;
+        editorState.titleSize = 100;
+        editorState.subtitle = tpl.subtitle;
+        editorState.info = tpl.info;
+        editorState.church = churchConfig.name;
+        editorState.address = churchConfig.address;
+        editorState.instagram = churchConfig.instagram;
+        editorState.colors = { bg: pal.bg, bg2: pal.bg2, accent: pal.accent, text: pal.text };
+        editorState.stickers = tpl.theme === 'aovivo' ? ['aovivo'] : [];
+        editorState.photos.forEach(p => {
+          p.shape = tpl.defaultShape || 'circle';
+        });
+      }
+
+      document.getElementById('gallery-view').classList.add('hidden');
+      document.getElementById('editor-view').classList.remove('hidden');
+
+      const cat = CATEGORIES.find(c => c.id === tpl.theme);
+      document.getElementById('editor-theme-badge').textContent = cat ? cat.name : tpl.theme;
+      document.getElementById('editor-template-name').textContent = tpl.name;
+
+      renderQuickVariations();
+      syncControlsFromState();
+      renderPhotoSlotsUI();
+      renderPalettesUI();
+      renderStickersUI();
+      updateFormatButtons();
+      renderStudio();
+    }
+
+    function closeEditor() {
+      document.getElementById('editor-view').classList.add('hidden');
+      document.getElementById('gallery-view').classList.remove('hidden');
+      renderGalleryThumbnails();
+    }
+
+    function renderQuickVariations() {
+      const variants = TEMPLATES.filter(t => t.theme === currentTemplate.theme);
+      const container = document.getElementById('quick-variations');
+      container.innerHTML = variants.map(v => {
+        const active = v.id === currentTemplate.id;
+        return `
+          <button onclick="openTemplate('${v.id}', true)" title="${v.name}"
+            class="py-1.5 px-2 rounded-lg text-[11px] font-semibold truncate border transition ${
+              active
+                ? 'bg-indigo-600 text-white border-indigo-400 shadow'
+                : 'bg-studio-900 text-zinc-400 border-white/10 hover:text-white hover:bg-studio-800'
+            }">
+            V${v.variant}: ${v.name.split(' ')[0]}
+          </button>
+        `;
+      }).join('');
+    }
+
+    function switchToolTab(tab) {
+      document.querySelectorAll('.tool-panel').forEach(p => p.classList.add('hidden'));
+      document.getElementById(`panel-${tab}`).classList.remove('hidden');
+
+      document.querySelectorAll('.tool-tab').forEach(btn => {
+        const isMe = btn.dataset.tool === tab;
+        btn.classList.toggle('text-indigo-400', isMe);
+        btn.classList.toggle('border-indigo-500', isMe);
+        btn.classList.toggle('bg-studio-850', isMe);
+        btn.classList.toggle('text-zinc-400', !isMe);
+        btn.classList.toggle('border-transparent', !isMe);
+      });
+    }
+
+    function setFormat(fmt) {
+      editorState.format = fmt;
+      updateFormatButtons();
+      renderStudio();
+    }
+
+    function updateFormatButtons() {
+      document.querySelectorAll('.format-btn').forEach(btn => {
+        const active = btn.dataset.format === editorState.format;
+        btn.classList.toggle('bg-indigo-600', active);
+        btn.classList.toggle('text-white', active);
+        btn.classList.toggle('text-zinc-400', !active);
+        btn.classList.toggle('hover:text-white', !active);
+      });
+      document.getElementById('resolution-badge').textContent = FORMATS[editorState.format].label;
+    }
+
+    function syncControlsFromState() {
+      document.getElementById('inp-tag').value = editorState.tag;
+      document.getElementById('inp-title').value = editorState.title;
+      document.getElementById('inp-title-size').value = editorState.titleSize;
+      document.getElementById('val-title-size').textContent = editorState.titleSize;
+      document.getElementById('inp-subtitle').value = editorState.subtitle;
+      document.getElementById('inp-info').value = editorState.info;
+      document.getElementById('inp-church').value = editorState.church;
+      document.getElementById('inp-address').value = editorState.address;
+      document.getElementById('inp-instagram').value = editorState.instagram;
+
+      document.getElementById('col-bg').value = editorState.colors.bg;
+      document.getElementById('col-accent').value = editorState.colors.accent;
+      document.getElementById('col-text').value = editorState.colors.text;
+      document.getElementById('chk-show-logo').checked = editorState.showLogo;
+      updateEditorLogoPreview();
+    }
+
+    function bindTextAndColorInputs() {
+      const textBindings = [
+        ['inp-tag', 'tag'],
+        ['inp-title', 'title'],
+        ['inp-subtitle', 'subtitle'],
+        ['inp-info', 'info'],
+        ['inp-church', 'church'],
+        ['inp-address', 'address'],
+        ['inp-instagram', 'instagram']
+      ];
+      textBindings.forEach(([elId, prop]) => {
+        document.getElementById(elId).addEventListener('input', e => {
+          editorState[prop] = e.target.value;
+          renderStudio();
+        });
+      });
+
+      document.getElementById('inp-title-size').addEventListener('input', e => {
+        editorState.titleSize = Number(e.target.value);
+        document.getElementById('val-title-size').textContent = editorState.titleSize;
+        renderStudio();
+      });
+
+      document.getElementById('col-bg').addEventListener('input', e => {
+        editorState.colors.bg = e.target.value;
+        editorState.colors.bg2 = e.target.value;
+        renderStudio();
+      });
+      document.getElementById('col-accent').addEventListener('input', e => {
+        editorState.colors.accent = e.target.value;
+        renderStudio();
+      });
+      document.getElementById('col-text').addEventListener('input', e => {
+        editorState.colors.text = e.target.value;
+        renderStudio();
+      });
+
+      document.getElementById('chk-show-logo').addEventListener('change', e => {
+        editorState.showLogo = e.target.checked;
+        renderStudio();
+      });
+
+      document.getElementById('inp-editor-logo').addEventListener('change', e => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = ev => {
+          const img = new Image();
+          img.onload = () => {
+            editorState.customLogoImg = img;
+            editorState.showLogo = true;
+            document.getElementById('chk-show-logo').checked = true;
+            updateEditorLogoPreview();
+            renderStudio();
+          };
+          img.src = ev.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function updateEditorLogoPreview() {
+      const box = document.getElementById('editor-logo-preview');
+      const img = editorState.customLogoImg || churchConfig.logoImg;
+      if (img) {
+        box.innerHTML = `<img src="${img.src}" class="max-w-full max-h-full object-contain p-1">`;
+      } else {
+        box.innerHTML = 'Sem Logo';
+      }
+    }
+
+    function removeEditorLogo() {
+      editorState.customLogoImg = null;
+      editorState.showLogo = false;
+      document.getElementById('chk-show-logo').checked = false;
+      updateEditorLogoPreview();
+      renderStudio();
+    }
+
+    // Render Photo Slots (1 slot normally, or 4 slots for Aniversariantes do Mês)
+    function renderPhotoSlotsUI() {
+      const count = currentTemplate.multiPhoto ? 4 : 1;
+      const container = document.getElementById('photo-slots-container');
+
+      let html = '';
+      for (let i = 0; i < count; i++) {
+        const p = editorState.photos[i];
+        html += `
+          <div class="bg-studio-950 border border-white/10 rounded-xl p-3.5 space-y-3">
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-xs font-bold text-white">${count > 1 ? `Aniversariante ${i + 1}` : 'Foto Principal'}</span>
+              <div class="flex items-center gap-2">
+                <label class="px-2.5 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-[11px] font-semibold cursor-pointer transition">
+                  ${p.img ? 'Trocar Foto' : 'Enviar Foto'}
+                  <input type="file" accept="image/*" onchange="handlePhotoUpload(event, ${i})" class="hidden">
+                </label>
+                ${p.img ? `<button onclick="clearPhotoSlot(${i})" class="px-2 py-1 rounded-lg bg-rose-500/15 text-rose-400 hover:bg-rose-500/25 text-[11px] font-semibold">Remover</button>` : ''}
+              </div>
+            </div>
+
+            ${count > 1 ? `
+              <div>
+                <label class="block text-[11px] text-zinc-400 mb-1">Nome do Aniversariante</label>
+                <input type="text" value="${p.name || ''}" oninput="updatePhotoProp(${i}, 'name', this.value)"
+                  class="w-full bg-studio-900 border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-white focus:border-indigo-500 focus:outline-none">
+              </div>
+            ` : ''}
+
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="block text-[11px] text-zinc-400 mb-1">Moldura</label>
+                <select onchange="updatePhotoProp(${i}, 'shape', this.value)" class="w-full bg-studio-900 border border-white/10 rounded-lg px-2 py-1.5 text-xs text-white focus:outline-none">
+                  <option value="circle" ${p.shape === 'circle' ? 'selected' : ''}>Círculo</option>
+                  <option value="rounded" ${p.shape === 'rounded' ? 'selected' : ''}>Quadrado Arredondado</option>
+                  <option value="rect" ${p.shape === 'rect' ? 'selected' : ''}>Retângulo</option>
+                  <option value="none" ${p.shape === 'none' ? 'selected' : ''}>Sem Borda (Fusão)</option>
+                </select>
+              </div>
+              <div>
+                <label class="flex justify-between text-[11px] text-zinc-400 mb-1">
+                  <span>Zoom</span><span class="font-mono text-indigo-300">${Math.round(p.zoom * 100)}%</span>
+                </label>
+                <input type="range" min="0.6" max="2.5" step="0.05" value="${p.zoom}" oninput="updatePhotoProp(${i}, 'zoom', parseFloat(this.value)); this.previousElementSibling.lastElementChild.textContent = Math.round(this.value*100)+'%'" class="w-full h-1.5 bg-studio-800 rounded-lg">
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="flex justify-between text-[11px] text-zinc-400 mb-1"><span>Posição X</span></label>
+                <input type="range" min="-100" max="100" value="${p.x}" oninput="updatePhotoProp(${i}, 'x', parseFloat(this.value))" class="w-full h-1.5 bg-studio-800 rounded-lg">
+              </div>
+              <div>
+                <label class="flex justify-between text-[11px] text-zinc-400 mb-1"><span>Posição Y</span></label>
+                <input type="range" min="-100" max="100" value="${p.y}" oninput="updatePhotoProp(${i}, 'y', parseFloat(this.value))" class="w-full h-1.5 bg-studio-800 rounded-lg">
+              </div>
+            </div>
+          </div>
+        `;
+      }
+      container.innerHTML = html;
+    }
+
+    function handlePhotoUpload(event, idx) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = ev => {
+        const img = new Image();
+        img.onload = () => {
+          editorState.photos[idx].img = img;
+          editorState.photos[idx].zoom = 1;
+          editorState.photos[idx].x = 0;
+          editorState.photos[idx].y = 0;
+          renderPhotoSlotsUI();
+          renderStudio();
+        };
+        img.src = ev.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function clearPhotoSlot(idx) {
+      editorState.photos[idx].img = null;
+      renderPhotoSlotsUI();
+      renderStudio();
+    }
+
+    function updatePhotoProp(idx, prop, val) {
+      editorState.photos[idx][prop] = val;
+      renderStudio();
+    }
+
+    // Palettes UI
+    function renderPalettesUI() {
+      const grid = document.getElementById('palettes-grid');
+      grid.innerHTML = PALETTES.map(p => `
+        <button onclick="applyPalette('${p.id}')"
+          class="bg-studio-950 hover:bg-studio-800 border border-white/10 hover:border-indigo-400 rounded-xl p-2 flex flex-col items-start gap-1.5 transition text-left">
+          <div class="flex items-center gap-1 w-full">
+            <span class="w-4 h-4 rounded-full border border-white/20" style="background:${p.bg}"></span>
+            <span class="w-4 h-4 rounded-full border border-white/20" style="background:${p.accent}"></span>
+            <span class="w-4 h-4 rounded-full border border-white/20" style="background:${p.text}"></span>
+          </div>
+          <span class="text-[11px] font-medium text-zinc-200 truncate w-full">${p.name}</span>
+        </button>
+      `).join('');
+    }
+
+    function applyPalette(id) {
+      const pal = PALETTES.find(p => p.id === id);
+      if (!pal) return;
+      editorState.colors = { bg: pal.bg, bg2: pal.bg2, accent: pal.accent, text: pal.text };
+      syncControlsFromState();
+      renderStudio();
+    }
+
+    // Stickers UI
+    function renderStickersUI() {
+      const container = document.getElementById('stickers-list');
+      container.innerHTML = STICKERS.map(st => {
+        const active = editorState.stickers.includes(st.id);
+        return `
+          <button onclick="toggleSticker('${st.id}')"
+            class="px-3 py-2 rounded-xl border text-xs font-bold transition flex items-center justify-between ${
+              active
+                ? 'bg-indigo-600/20 border-indigo-400 text-white'
+                : 'bg-studio-950 border-white/10 text-zinc-400 hover:text-white'
+            }">
+            <span class="truncate">${st.label}</span>
+            <span class="w-2.5 h-2.5 rounded-full shrink-0 ml-1" style="background:${st.color}"></span>
+          </button>
+        `;
+      }).join('');
+    }
+
+    function toggleSticker(id) {
+      if (editorState.stickers.includes(id)) {
+        editorState.stickers = editorState.stickers.filter(s => s !== id);
+      } else {
+        editorState.stickers.push(id);
+      }
+      renderStickersUI();
+      renderStudio();
+    }
+
+    function resetCurrentTemplate() {
+      openTemplate(currentTemplate.id, false);
+    }
+
+    function renderStudio() {
+      renderArtToCanvas(studioCanvas, currentTemplate, editorState);
+    }
+
+    // Drag directly on Canvas to pan Photo 1
+    let isDraggingCanvas = false;
+    let dragStart = { x: 0, y: 0, origX: 0, origY: 0 };
+
+    studioCanvas.addEventListener('pointerdown', e => {
+      isDraggingCanvas = true;
+      studioCanvas.setPointerCapture(e.pointerId);
+      dragStart = {
+        x: e.clientX,
+        y: e.clientY,
+        origX: editorState.photos[0].x,
+        origY: editorState.photos[0].y
+      };
+    });
+    studioCanvas.addEventListener('pointermove', e => {
+      if (!isDraggingCanvas) return;
+      const dx = (e.clientX - dragStart.x) * 0.45;
+      const dy = (e.clientY - dragStart.y) * 0.45;
+      editorState.photos[0].x = Math.max(-100, Math.min(100, dragStart.origX + dx));
+      editorState.photos[0].y = Math.max(-100, Math.min(100, dragStart.origY + dy));
+      renderStudio();
+    });
+    studioCanvas.addEventListener('pointerup', () => {
+      if (isDraggingCanvas) {
+        isDraggingCanvas = false;
+        renderPhotoSlotsUI();
+      }
+    });
+
+    // High-Resolution Instant PNG Download (Zero Watermark)
+    function downloadPNG() {
+      renderStudio();
+      const fmt = FORMATS[editorState.format];
+      const safeName = currentTemplate.id.replace(/[^a-z0-9-]/gi, '-');
+      const link = document.createElement('a');
+      link.download = `midia-igreja-${safeName}-${fmt.width}x${fmt.height}.png`;
+      link.href = studioCanvas.toDataURL('image/png', 1.0);
+      link.click();
+    }
+
+    // =========================================================================
+    // 7. CHURCH MEMORY MODAL (localStorage)
+    // =========================================================================
+    let modalTempLogoDataUrl = null;
+
+    function openChurchModal() {
+      document.getElementById('modal-church-name').value = churchConfig.name || '';
+      document.getElementById('modal-church-address').value = churchConfig.address || '';
+      document.getElementById('modal-church-ig').value = churchConfig.instagram || '';
+      modalTempLogoDataUrl = churchConfig.logoDataUrl;
+      updateModalLogoPreview();
+      document.getElementById('church-modal').classList.remove('hidden');
+    }
+
+    function closeChurchModal() {
+      document.getElementById('church-modal').classList.add('hidden');
+    }
+
+    function updateModalLogoPreview() {
+      const box = document.getElementById('modal-logo-preview');
+      if (modalTempLogoDataUrl) {
+        box.innerHTML = `<img src="${modalTempLogoDataUrl}" class="max-w-full max-h-full object-contain p-1">`;
+      } else {
+        box.innerHTML = 'Logo';
+      }
+    }
+
+    function clearModalLogo() {
+      modalTempLogoDataUrl = null;
+      updateModalLogoPreview();
+    }
+
+    document.getElementById('modal-logo-input').addEventListener('change', e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = ev => {
+        modalTempLogoDataUrl = ev.target.result;
+        updateModalLogoPreview();
+      };
+      reader.readAsDataURL(file);
+    });
+
+    function saveChurchConfig() {
+      churchConfig.name = document.getElementById('modal-church-name').value.trim() || 'Minha Igreja';
+      churchConfig.address = document.getElementById('modal-church-address').value.trim();
+      churchConfig.instagram = document.getElementById('modal-church-ig').value.trim();
+      churchConfig.logoDataUrl = modalTempLogoDataUrl;
+
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        name: churchConfig.name,
+        address: churchConfig.address,
+        instagram: churchConfig.instagram,
+        logoDataUrl: churchConfig.logoDataUrl
+      }));
+
+      if (churchConfig.logoDataUrl) {
+        const img = new Image();
+        img.onload = () => {
+          churchConfig.logoImg = img;
+          applyChurchMemoryToCurrent();
+          updateEditorLogoPreview();
+          renderGalleryThumbnails();
+        };
+        img.src = churchConfig.logoDataUrl;
+      } else {
+        churchConfig.logoImg = null;
+        applyChurchMemoryToCurrent();
+        updateEditorLogoPreview();
+        renderGalleryThumbnails();
+      }
+
+      updateChurchSavedIndicator();
+      closeChurchModal();
+    }
+
+    function applyChurchMemoryToCurrent() {
+      editorState.church = churchConfig.name;
+      editorState.address = churchConfig.address;
+      editorState.instagram = churchConfig.instagram;
+      syncControlsFromState();
+      if (!document.getElementById('editor-view').classList.contains('hidden')) {
+        renderStudio();
+      }
+    }
+
+    // =========================================================================
+    // 8. INITIALIZATION
+    // =========================================================================
+    async function initApp() {
+      loadChurchConfig();
+      bindTextAndColorInputs();
+      switchToolTab('textos');
+      renderCategoryTabs();
+
+      // Wait for Google Fonts to be ready so Canvas typography renders sharply
+      if (document.fonts && document.fonts.ready) {
+        try { await document.fonts.ready; } catch (_) {}
+      }
+      renderGalleryGrid();
+    }
+
+    window.addEventListener('DOMContentLoaded', initApp);
+  </script>
+</body>
+</html>
